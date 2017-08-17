@@ -1,0 +1,118 @@
+
+ArrayList<T> - Sort the collection
+===================================
+
+ In order to sort the ArrayList<T> collection, we need to use java.util.Comparator<T> interface. 
+    There is int compareTo(T param1, T param2) method in Comparator<T> which returns >0 if param1 > param2,
+    returns -1 if param1<param2, returns 0 otherwise.
+
+Example:
+
+(code in main() method)
+
+ ArrayList<Product> products = new ArrayList<>();
+ //add some products
+ products.add( new Product(.....) );
+ ......
+ ......
+
+
+ //Use anonymous inner type to implement the Comparator<T>
+
+       Comparator<Product> byId = new Comparator<Product>() {
+            @Override
+            public int compare(Product o1, Product o2) {
+                return o1.getId() - o2.getId();
+            }
+        };
+        products.sort(byId);
+        System.out.println("Sort by Id");
+        for(Product p : products)
+            System.out.println(p);
+
+        Comparator<Product> byName = (o1,o2)-> o1.getName().compareTo(o2.getName());
+        products.sort(byName);
+        System.out.println("Sort by Name");
+        for(Product p : products)
+            System.out.println(p);
+
+        products.sort((x,y)-> (int) (x.getRate()- y.getRate()));
+        System.out.println("Sort by Rate");
+        for(Product p : products)
+            System.out.println(p);
+
+The java.util.Collections.sort(List<T>,Comparator<T>) - an alternative of ArrayList<T> instance sort(Comparator<T>) method
+-------------------------------------------------------------------------
+
+Example:
+
+         Collections.sort(products, (p1,p2)-> p1.getName().compareTo(p2.getName()));
+         for(Product p: products)
+             System.out.println(p);
+
+
+Customize the collection by extending the class (ArrayList<T>, HashSet<T> or HashMap<K,V> sub classes)
+------------------------------------------------
+
+Example:
+
+Step-1 Create Product class (as per previous definition)
+Step-2 Create a "Products" class which extends the ArrayList<T>
+
+public class Products extends ArrayList<Product> { }
+
+Step-3 Code in main:
+
+ Products products = new Products();
+ //add some products
+ products.add( new Product(.....) );
+ ......
+ ......
+
+Example: Extends the sub class of ArrayList<Product>
+We want to add "helper" methods so the user can easily call these methods without adding/creating objects.
+
+public class Products extends ArrayList<Product> {
+  public void add(int id,String name, String category, double rate, double quantity) {
+      add(new Product(id,name,category,rate,quantity,true,false));
+  }
+  public void delete(int id) {
+      remove(new Product(id));
+  }
+}
+
+code in main:
+
+   Products products = new Products();
+   products.add(10,"Microsoft","Keyboard",1000,1);
+   .....
+   
+Example: Use the HashMap<K,V> to represent the "Products" 
+
+Method-1 
+  
+    public class Products {
+       private HashMap<Integer,Product> map = new HashMap<>();
+
+       public void add(int id, String name, String category) {
+          map.put(id, new Product(id,name,category));  //assume that the Product constructor has three parameters
+       }
+       public void del(int id) {
+          map.remove(id);
+       }
+       public Collection<Product> getProducts() { return map.values(); }
+     }
+
+     code in main:
+
+        Products products = new Products();
+        products.add(1,"NAtraj","Pencil");
+        products.add(2,"Naveneet","Pencil");
+        for(Product p: products.getProducts()) 
+           s.o.p(p);
+        products.del(2);
+        for(Product p: products.getProducts()) 
+           s.o.p(p);
+ 
+
+

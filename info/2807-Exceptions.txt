@@ -1,0 +1,228 @@
+Exception Handling in Java Platforms
+=====================================
+
+ What is an "exception"?
+
+     Unexpected happning in the code is known as an exception. If these unexpected conditions arise
+     in a code and if we don't handle them then they cause wrong output or it causes abruptly 
+     termination of the program.
+
+     For example, age value is 2000  (for a human being)
+		  name of person contains digits
+		  wish to read data from file but file is not exists
+		  request the web site but InterNetwork connection is not established
+		  and so on...
+
+ How to handle the "Exceptions"?
+
+      There is an "Exception" API / Exception framework and some keywords to handle the exceptions.
+
+	Exception API
+        -------------
+
+	In order to handle the exception and also to define the "exceptions", we must have to use
+	the "Exception Framework".
+
+	The class java.lang.Throwable is the super class of "Exception" classes exists in very same
+	package and other packages across the platforms (EE,ME, and Android).
+
+        We will use toString(), getMessage() and pritStackTrace() methods of "Throwable" class to 
+	learn the cause of the exceptions.
+
+
+	Further, the "Throwable" class is inherited by three classes namely - 
+		java.lang.Exception
+		java.lang.RuntimeException and
+		java.lang.Error
+
+         These above mentioned three sub-classes of "Throwable" define the
+	 three behaviors of exceptions:
+
+		1. Runtime exception - java.lang.RuntimeException and its sub-classes are
+			reporting during the program/code execution. This category of classes
+			are only used by the internal API of Java and we should not use
+			the RuntimeException for our types to define the exceptions.
+
+			ArrayOutOfBoundException, DivideByZeroException etc are example of 
+			RuntimeException.
+
+			Runtime exceptions are also known as "Unchecked" exceptions.
+		2. Compile time exception or Checked Exceptions
+			Class java.lang.Exception and sub-classes of it are example of
+			checked exception. These exceptions are reporting by both; compiler as well as
+			runtime (JVM).
+
+			Always define the checked exceptions for the types you define.
+
+		3. Error - Class java.lang.Error and sub classes are fall into "Error" exception.
+
+			 These exceptions are neither handled nor caught. These exception always
+			 terminate the applications (JVM).
+
+
+ 	           
+         Keywords and statements
+         -----------------------
+
+          1. try  block and try-with-resource block
+
+		Syntax:
+
+			try {
+
+                        }
+
+                  
+                        try(AutoCloseable object =.... ) {
+
+
+                        }
+
+                    "try" block is used to "catch" the exceptions which are reporting during
+			compilation as well as runtime.
+
+		    try block can have one or more catch caluses or a finally clause or  multiple
+			catch caluses and finally clause.
+
+		   
+		    try-with-resource syntax: It is mainly used to dispose the memory hungry
+		    objects (resources) gracefully. Mostly I/O, SQL, Network, Cipher objects uses
+		  huge amount of memory and we must have to release these resources by calling the
+			"close" method explicitly but if we use the try-with-resource syntax then
+			this syntax gaurantee to execute the "close()" on any cases.
+
+
+Example:
+
+class MyResource implements AutoCloseable {
+  @Override public void close() {
+     System.out.println("This is the close() method.");
+  }
+}
+
+code in main:
+
+  try(MyResource r = new MyResource()) {
+ 
+  }catch(Exception ex) {
+
+  }
+
+OR you can use simple try...catch..finally to call the close() method manually.
+
+        MyResource r = null;
+
+         try {
+             r = new MyResource();
+             //TODO
+         }catch ( Exception ex) {
+             System.out.println(ex);;
+         } finally {
+             if(r!=null) {
+                 r.close();
+             }
+         }
+   2. catch clause - This clause receive the object reference of "Exception" or "RuntimeException"
+	class.
+
+	try{
+        }catch(Type1 | Type2 | Type3 varName) {
+
+        }catch(Type4 varName) {
+
+        }catch(Exception varName) {
+
+        }
+
+        The last "catch" clause must have "fallback" possibly Exception class name.
+
+  3. finally -- This block will be executed even an exception is thrown, caught or not.
+
+  4. throws -- To repot or document the kind of exception the method can produce and throw.
+
+     Syntax:     access return-type methodName(param...) throws Exception1, Exception2, ... {  }
+
+  5. throw  -- To throw an Exception object (Checked or uncheked) Or produce the exception or
+		raise an exception.
+
+Example:
+
+class Test {
+   public static void foo() throws RuntimeException {
+      throw new ArrayIndexOutOfBoundsException("Array related issue!!!");
+    }
+    public static void bar() throws FileNotFoundException {
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+         Test.foo();  // Compiler will not report because it reports unchecked exception
+         Test.bar();  // <--- Compiler report this exception and 
+		      //      won't compile the code until you handle
+		      //      the exception or reporting it further.
+    }
+}
+
+Example: Handle and report the exception
+
+class A {
+  public static void foo() throws Exception {
+      throw new Exception("From A's foo()");
+  }
+}
+
+class B {
+   public static void bar() throws Exception {
+
+    // handle and then report or re-throws
+
+    try {
+        A.foo(); 
+    }catch(Exception ex) {
+      throw new Exception("From B's bar()", ex);   // "New exception message",object-of-exception
+                                                   //                          being caught
+    }
+}
+
+code in main:
+
+ try {
+    B.bar(); 
+ }catch(Exception ex) {
+    ex.printStackTrace();  // show all exceptions (chains of exceptions)
+ }
+
+User-defined exception classes
+===============================
+Note that the "Exception" class name itself represent the message or meaning
+of the cause. So use proper and meaningful class name.
+
+Example:
+
+class AgeException extends Exception {}
+class NameException extends Exception {
+    //We can add constructors too
+    public NameException(String msg, Exception ex ) {
+        super(msg,ex);
+    }
+}
+class A {
+    public static void foo() throws Exception {
+        throw new AgeException();
+    }
+}
+class B {
+    public static void bar() throws Exception {
+        try {
+            A.foo();
+        } catch (Exception ex) {
+            throw new NameException("",ex);  
+        }
+    }
+}
+
+
+
+
+

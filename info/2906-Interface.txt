@@ -1,0 +1,200 @@
+Lambda expression
+==========================================
+
+Lambda expression is a new syntax to create anonymous class and object using the interface. But this lambda syntax has 
+a restriction - the interface must have one and only one abstract method. You can't use lambda syntax if an interface contains two or more abstract methods.
+
+
+An interface that contains exactly one abstraction method is commonly known as "default interface".
+
+
+Syntax:
+
+ YourInterface refVarName = (parameter1,parameter2,...)-> single-statement;
+Or
+ YourInterface refVarName = (parameter1,parameter2,...)-> {
+     multiple statements
+     ....
+  };
+
+NOTE: The "single-statement" syntax implicitly uses "return" keyword if your method returns anything.
+Example:
+
+
+interface MathAction {
+    double action(double no1, double no2);
+}
+public class Main {
+    public static void main(String[] args) {
+
+        //Lambda expression syntax
+        MathAction add = (p,q) ->  p+q;
+        MathAction mul = (p,q)-> p*q;
+        MathAction div = (x,y) -> {
+          return x/y;
+        };
+        MathAction series = (a,b) -> {
+          double s  = 0;
+          for(double i = a;i<=b;i++) {
+              s=s+i;
+              System.out.println(i);
+          }
+          return s;
+        };
+        System.out.println(add.action(10,20));
+        System.out.println(mul.action(11,22));
+        System.out.println(div.action(22,33));
+        System.out.println(series.action(1,50));
+    }
+}
+
+Example: Update code in main() of "Login" app
+
+  Login login = new Login("aa","aa","admin");
+  login.setLoginListener( (user,status)-> System.out.println(user.getUsername() + " status : " + status);
+  login.check();
+
+OR
+
+  login.setLoginListener( (u,s)-> {
+      if(s == 1) {
+          System.out.println("Welcome " + s.getUsername());
+      } else {
+          System.out.println("Invalid username or password");
+      }
+  });
+  login.check();
+
+Example: Write code that define a "print()" method which receive a lambda/anonymous object 
+         to filter the data of int array.
+
+interface Predicate<T> {
+    boolean action(T value);
+}
+class Data {
+    private static int []nos = {1,2,3,4,-7,7,33,2,-20,77,5,2};
+
+    public static void print(Predicate<Integer> where) {
+        for (Integer n : nos) {
+            if(where.action(n)) {
+                System.out.println(n);
+            }
+        }
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+       Data.print( (p)->p>=1 && p<=10 );
+        System.out.println("--");
+       Data.print( (x)->x<0);
+        System.out.println("--");
+        Data.print( (p)->p%2==1);
+    }
+}
+
+Example: Update "Question" app. Publish an event into Question type which will be raised when user's answer is
+         examine-  Pass "corret" or "incorrect" string message to the callback handler.
+
+
+Example: Create a "Product" definition
+
+public class Product {
+   private String name,
+                  unit;   // unit of measurement - kg, ml, ltr etc
+   private boolean available; 
+   private double rate, 
+                  quantity;
+   private String category;
+   private boolean feature;
+}
+
+public class Products {
+   private static Product []products = {
+      new Product("Santoor .45","Nog",true,5.5,1,"Pen",false),
+      ....
+      ....
+   }
+   
+  public Product [] getProducts() { return products; }
+
+  //Query method
+  // 1. Display products by category 
+  // 2. List available products
+  // 3. List the featured products  
+  // 4. List the all products of a particuar "category" whose rate exists in between given range 
+}
+
+And the code in main() might be:
+   
+  for(Product p : Products.getAvailableProducts()) 
+      System.out.println(p.getName().....);
+  
+Example: We've a UserInfo class that represents the user's credentails along with some other info.
+
+public class UserInfo {
+   private String email,
+                  password,
+                  role,
+                  firstName,
+                  lastName,
+                  mobile;
+   private boolean active;
+   private java.util.Date created,
+                          lastLogin;
+}
+
+public class Users {
+    public static UserInfo []getUsers() {
+         //Note: You can also use the static field as we did in previous example
+         return new UserInfo[] {
+               new UserInfo("aa@aa.com","aa","Admin","Mr.A","Shah","99322222",true, new java.util.Date(),null),
+               new UserInfo("bb@bb.com","bb","Student","Mr.T","Patel","55443333",false,
+                              new java.util.Date(),new java.util.Date()),
+               ...... 
+ 
+         };
+     }   
+
+    //Query methods
+    // 1. List the "Admin" users
+    // 2. List the "Student" users
+    // 3. List the active users
+    // 4. List the inactive users
+    // 5. List the users have not logged yet ( lastLogin is null)
+}
+
+Example:
+
+class Farmer {
+
+}
+
+class AgrLand {
+   private int surveyNo,areaNo;
+   private double size;
+   private Farmer farmer;
+}
+class AgrLandTax {
+   int year;
+   AgrLand agrLand;
+   double amount;
+   java.util.Date paid;
+}
+
+class AgrLandTaxes {
+   AgrLandTax []agrLanTaxes  = { .... }
+ //query methods
+  List who have not paid since given year or year range and many more
+}
+
+class Borwell {
+}
+class StreetElecticityBill {}
+class Expenses {}
+class Income {}
+class House {}
+class NonAgrLand {}
+class Donation {}
+
+  
+}

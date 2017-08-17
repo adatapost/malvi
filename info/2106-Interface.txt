@@ -1,0 +1,652 @@
+The "interface" type
+=====================
+
+The "interface" type is mainly used for the following purposes:
+
+   1. Code separation; it separates the implementation from the declaration. In C Language, we've written function
+      declaration for the user of the code so she/he can understand the syntax and objective of the function and the
+      creator of the code has already defined a function elsewhere in very same program file or in other program file.
+
+      In Java, we will use interface type for the method declarations (or prototype of functions) whereas "class" types
+      include the definitions of the said methods.
+
+   2. The declaration of method is also known as a "reference to the method (in C language, we use the term "function 
+      pointer")". The method declaration itself acts as a reference variable that holds memory reference of the
+      method.
+ 
+      This approach allow us to pass a method reference from one method to another method, call the methods 
+      from anywhere -- this behavior is known as "callback method".
+
+      In Java, we can create anonymous type using interface and inner-type syntax to achieve the "Closure behavior".
+
+      A closure is an object that contains a method and a method specific data.
+
+   3. To achieve the real-world polymorphism. There will be two or more implementations of single declaration and
+      it sounds the "polymorphism".
+   4. Interfaces help us to design the APIs; that means a code separation -- keep declarations in interfaces and
+      implementations into the classes.
+
+Example: Example demonstrate the use of "Method Reference" or "Virtual Method Table"; a memory region to store method refrences by the memory manager of JVM.
+
+package in.abc;
+
+interface First {
+  void method1();
+}
+interface Second {
+  void method1();
+  void method2();
+}
+
+class FirstImpl implements First, Second {
+   //Common implementation of method1
+   public void method1() { System.out.println("method1()"); }
+   public void method2() { System.out.println("method2()"); }
+}
+class AnotherImpl implements First,Second {
+   public void method1() { System.out.println("method1() from Another"); }
+   public void method2() { System.out.println("method2() from Another"); }
+}
+class TestImpl implements First {
+   public void method1() { System.out.println("method1() from Test"); }
+}
+
+class Test {
+  public static void main(String []args) {
+    FirstImpl s1 = new FirstImpl();
+    AnotherImpl s2 = new AnotherImpl();
+    TestImpl s3 = new TestImpl();
+
+    // Virtual Method Table OR Table that represent method ref
+    First f = null;
+    /* 
+|-------------------------------|
+| Method    | Reference         |
+|-------------------------------|
+| method1   | null              |
+|-------------------------------|
+     */
+   f = s1;
+/* 
+|-------------------------------|
+| Method    | Reference         |
+|-------------------------------|
+| method1   | s1.method1        |
+|-------------------------------|
+     */
+  f.method1();
+f = s2;
+/* 
+|-------------------------------|
+| Method    | Reference         |
+|-------------------------------|
+| method1   | s2.method1        |
+|-------------------------------|
+     */
+  f.method1();
+
+ Second s = s1;
+ s.method1();
+ s.method2();
+ s = s2;
+ s.method1();
+ s.method2();
+
+ // s = s3; // Error - class TestImpl is not an implementor of Second interface
+ 
+    
+   //Pass method reference to another method
+   perform(s1);
+   perform(s2);
+   perform(new TestImpl());
+
+  }//End main
+
+ //Receive the First type object
+ static void perform(First obj) {
+   obj.method1();
+ }
+
+}//End of class
+
+Example: A "Language" interface has "speak()" method (abstract or declare). Write implementators of "Language"
+
+package in.abc;
+
+public interface Language {
+  void speak();
+}
+
+//Implementors
+public class English implements Language {
+   public void speak() {
+      System.out.println("I can speak English.");
+   }
+}
+public class Gujarati implements Language {
+   public void speak() {
+      System.out.println("I can speak Gujarati.");
+   }
+}
+public class Test {
+   static void speech(Language l) {
+      l.speak();
+   }
+
+   public static void main(String []args) {
+       speech(new English());
+       speech(new Gujarati());
+ 
+       Language []speakers = 
+         { 
+           new English(), new English(), new Gujarati(),
+           new English(), new Gujarati()
+          };
+        for(Language speaker : speakers) {
+             speech(speaker); // or speaker.speak();
+        }
+   }
+}
+     
+Example: 
+
+public interface Question {
+   void setText(String text);
+   String getText();
+   void setAnswer1(String answer1);
+   void setAnswer2(String answer2);
+   void setAnswer3(String answer3);
+   String getAnswer1();
+   String getAnswer2();
+   String getAnswer3();
+
+   boolean isCorrect(); void display();
+}
+
+public class SingleChoiceQuestion implements Question { ... }
+public class MultiChoiceQuestion implements Question { ... }
+
+
+Question.java
+===============
+package in.abc;
+
+/**
+ * Created by kvprajapati on 6/27/2017.
+ */
+public interface Question {
+    void setText(String text);
+
+    String getText();
+
+    void setAnswer1(String answer1);
+
+    void setAnswer2(String answer2);
+
+    void setAnswer3(String answer3);
+
+    String getAnswer1();
+
+    String getAnswer2();
+
+    String getAnswer3();
+
+    boolean isCorrect();
+
+    void display();
+}
+
+SingleChoiceQuestion.java
+--------------------------
+package in.abc;
+
+import java.util.Scanner;
+
+/**
+ * Created by kvprajapati on 6/27/2017.
+ */
+public class SingleChoiceQuestion implements Question {
+    private String text,
+            answer1, answer2, answer3;
+    private int correctOption, userOption;
+
+    public SingleChoiceQuestion() {
+    }
+
+    public SingleChoiceQuestion(String text, String answer1, String answer2, String answer3, int correctOption) {
+        this.text = text;
+        this.answer1 = answer1;
+        this.answer2 = answer2;
+        this.answer3 = answer3;
+        this.correctOption = correctOption;
+    }
+
+    @Override
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public String getText() {
+        return text;
+    }
+
+    @Override
+    public void setAnswer1(String answer1) {
+        this.answer1 = answer1;
+    }
+
+    @Override
+    public void setAnswer2(String answer2) {
+        this.answer2 = answer2;
+    }
+
+    @Override
+    public void setAnswer3(String answer3) {
+        this.answer3 = answer3;
+    }
+
+    @Override
+    public String getAnswer1() {
+        return answer1;
+    }
+
+    @Override
+    public String getAnswer2() {
+        return answer2;
+    }
+
+    @Override
+    public String getAnswer3() {
+        return answer3;
+    }
+
+    @Override
+    public boolean isCorrect() {
+        return correctOption == userOption;
+    }
+
+    @Override
+    public void display() {
+        System.out.println(text);
+        System.out.println("1. " + answer1);
+        System.out.println("2. " + answer2);
+        System.out.println("3. " + answer3);
+        Scanner sc= new Scanner(System.in);
+        System.out.print("Enter your choice : ");
+        userOption = sc.nextInt();
+
+    }
+}
+
+MultiChoiceQuestion.java
+---------------------------
+package in.abc;
+
+import java.util.Scanner;
+
+/**
+ * Created by kvprajapati on 6/27/2017.
+ */
+public class MultiChoiceQuestion implements Question {
+    private String text,
+            answer1, answer2, answer3;
+    private int[] correctOption = new int[3],
+            userOption = new int[3];
+
+    public MultiChoiceQuestion() {
+    }
+
+    public MultiChoiceQuestion(String text, String answer1, String answer2, String answer3, int[] correctOption) {
+        this.text = text;
+        this.answer1 = answer1;
+        this.answer2 = answer2;
+        this.answer3 = answer3;
+        this.correctOption = correctOption;
+    }
+
+    @Override
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public String getText() {
+        return text;
+    }
+
+    @Override
+    public void setAnswer1(String answer1) {
+        this.answer1 = answer1;
+    }
+
+    @Override
+    public void setAnswer2(String answer2) {
+        this.answer2 = answer2;
+    }
+
+    @Override
+    public void setAnswer3(String answer3) {
+        this.answer3 = answer3;
+    }
+
+    @Override
+    public String getAnswer1() {
+        return answer1;
+    }
+
+    @Override
+    public String getAnswer2() {
+        return answer2;
+    }
+
+    @Override
+    public String getAnswer3() {
+        return answer3;
+    }
+
+    @Override
+    public boolean isCorrect() {
+        return correctOption[0] == userOption[0]
+                && correctOption[1] == userOption[1]
+                 && correctOption[2] == userOption[2];
+    }
+
+    @Override
+    public void display() {
+        System.out.println(text);
+        System.out.println("1. " + answer1);
+        System.out.println("2. " + answer2);
+        System.out.println("3. " + answer3);
+        Scanner sc= new Scanner(System.in);
+        System.out.print("Enter your choice1 : ");
+        userOption[0] = sc.nextInt();
+        System.out.print("Enter your choice2 : ");
+        userOption[1] = sc.nextInt();
+        System.out.print("Enter your choice3 : ");
+        userOption[2] = sc.nextInt();
+    }
+}
+
+code in main:
+
+Question []questions =
+{
+   new SingleChoiceQuestion("What is an OS?",
+                            "It is an operating system",
+                            "It is an operating env",
+                            "It is an object system",1),
+   new MultiChoiceQuestion("Sum of 1 + 2",
+                            "1+1+1",
+                            "0+3",
+                            "3*1",new int[]{1,1,1}),
+   new MultiChoiceQuestion("Sum of 2 + 2",
+                            "1+1+1",
+                            "4",
+                            "3*1",new int[]{0,1,0})
+};
+
+for(Question q:questions)
+   q.display();
+for(Question q:questions)
+   System.out.println(q.getText()  + " " + q.isCorrect());
+
+
+Interface to design the event system
+=====================================
+
+In Java platforms (SE,EE,ME, and Android), the interfaces are used to define the events -- these events
+can belongs to GUI or non-GUI components.
+
+Here in Java, we've special naming conventions for the interfaces used as "Event" types. These interfaces uses
+"Listener" suffix.
+
+   For example,   ActionListener, KeyListener and so on.
+
+Example: Write an event type called "DataChangeListener" and publish an event in "Test" class. In a "Test" class we've a integer field called "num" and we've to raise or fire an event whenever the value of "num" field has be updated/changed.
+
+public interface DataChangeListener {
+   void change();
+}
+//Note: It is not mandatory to use Listener suffix while creating interfaces to publish the events however use of 
+//      Listener suffix is consider the good practice.
+
+
+Test.java
+------------- 
+public class Test {
+    private int num;
+
+    //Publish the Event
+    private DataChangeListener dataChangeListener;
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
+        if(dataChangeListener!=null) {
+            // Raise the event
+            dataChangeListener.change();
+        }
+    }
+    public void setDataChangeListener(DataChangeListener dataChangeListener) {
+        this.dataChangeListener = dataChangeListener;
+    }
+}//End class
+
+Main.java
+-------------
+
+/* Event Handler Definitions */
+class MyImpl implements DataChangeListener {
+    public void change() {
+        System.out.println("Number has been changed!!!");
+    }
+}
+class YourImpl implements DataChangeListener {
+    public void change() {
+        System.out.println("Changed!!!");
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Test a = new Test();
+        a.setNum(551);
+        a.setDataChangeListener(new MyImpl());  // Attach the event handler
+        a.setNum(10);
+        a.setNum(20);
+        a.setDataChangeListener(null); //Detach the handler
+        a.setNum(55);
+        a.setDataChangeListener(new YourImpl());
+        a.setNum(-2);
+    }
+}//End Class
+
+Example: Publish the loginSuccess and loginFail event into the "Login" class. We've username, password and role fields (all are of string) in Login class.
+
+
+Anonymous class using interface
+================================
+The following syntax creates a nameless (anonymous) class which implements the specified interface.
+
+
+  Syntax:
+
+    YourInterface  refVarName = new YourInterface() {
+         //Implentation of the interface 
+         //code
+    };
+
+    First of a new class which is nameless will be created by implementing the YourInterface.
+    After then the "new" keyword creates an object of anonymous class.
+    new (? implements YourInterface {
+        //body
+     });
+  
+ We can create an object of anonymous class as class members or inside the method. 
+ That means we can implement an interface anywhere within the code block without
+ adding className to it.
+
+Example: (code in main method) We want to create handlers of DataChangeListener and attach them to
+          the Test object.
+
+       DataChangeListener handler1 = new DataChangeListener() {
+            @Override
+            public void change() {
+                System.out.println("Changed!!");
+            }
+        };
+
+        Test a = new Test();
+        a.setDataChangeListener(handler1);
+        a.setNum(44);
+        a.setNum(33);
+
+        a.setDataChangeListener(new DataChangeListener() {
+            @Override
+            public void change() {
+                System.out.println("Num updated!!!");
+            }
+        });
+        a.setNum(22);
+        a.setNum(66);    
+
+Example:
+
+interface MathAction {
+    double calc(double no1,double no2);
+}
+
+public class Main {
+    public static void main(String[] args) {
+         MathAction add = new MathAction() {
+             @Override
+             public double calc(double no1, double no2) {
+                 return no1+no2;
+             }
+         };
+         MathAction mul = new MathAction() {
+             @Override
+             public double calc(double no1, double no2) {
+                 return no1*no2;
+             }
+         };
+         MathAction series  = new MathAction() {
+             @Override
+             public double calc(double no1, double no2) {
+                 double sum =0;
+                 for(double i = no1;i<=no2;i++) {
+                     System.out.println(i);
+                     sum+=i;
+                 }
+                 return sum;
+             }
+         };
+
+        System.out.println(add.calc(10,20));
+        System.out.println(mul.calc(5,7));
+        System.out.println(series.calc(1,10));
+
+        doSomething(add);
+        doSomething(mul);
+    }
+    static void doSomething(MathAction action) {
+        System.out.println(action.calc(90,100));
+    }
+}
+
+
+Login login = new Login("aa","bb","admin");
+login.setLoginListener(new LoginListener() {
+   public void success() {
+      System.out.println("Welcome!!!!");
+   }
+   public void fail() {
+      System.out.println("Invalid username or password");
+   }
+});
+
+
+Example: Re-Write "Test" class that publishes "DataChangeListener" event but now we want to pass the old value and new value of the field "num" to the event handler.
+
+  This example demonstrate how to generate or pass event specific data.
+
+Update 1 
+
+  public interface DataChangeListener {
+     void change(int oldValue, int newValue);
+  }
+
+Update 2
+
+  code in setNum() method in Test class:
+
+   public void setNum(int num) {
+      if(dataChangeListener!=null) {
+          dataChangeListener.change(this.num,num);
+      }
+      this.num = num;
+    }
+
+Update 3 
+
+    Code in main method
+
+    //Create anonymous class object
+    DataChangeListener handler = new DataChangeListner() {
+       public void change(int oldValue, int newValue) {
+           System.out.println("Value " + oldValue + " is replaced by " + newValue);
+       }
+    }
+    
+    Test test = new Test();
+    test.setDataChangeListener( handler );
+    test.setNum(40);
+    test.setNum(60);
+    
+ 
+Example:  Update the "LoginListener" and "Login" class
+
+public interface LoginListener {
+  void message(Login login, int status);  // status value 0 means fail and 1 means success
+}
+
+Update the check() method in Login class,
+
+ public void check() {
+   boolean isExists = false;
+   for(Login login : getUsers()) {
+     if(login.getUsername().equals( getUsername() )
+           && login.getPassword().equals( getPassword() ) ) {
+        isExists = true;
+        break;
+     }
+   }
+
+   if(loginListener != null ) {
+      if(isExists) {
+          loginListener.message( this , 1);
+      } else {
+          loginListener.message( this , 0);
+      }
+    } 
+ }
+
+Update the main() code:
+
+  Login login = new Login("aa","bb","admin");
+  login.setLoginListener( new LoginListener() {
+     public void message(Login login, int status) {
+         if(status == 1) {
+            System.out.println("Welcome user " + login.getUsername());
+         } else {
+            System.out.println(login.getUsername() + " is incorrect or invalid password");
+         }
+     }
+  });
+  //call the check
+  login.check();
+   
+

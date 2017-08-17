@@ -1,0 +1,197 @@
+Composition Design
+===================
+
+To use "classes" as fields into other "classes"; composite or collection of objects.
+
+Example:
+
+public class Address {
+  private String city;
+  private int pin;
+  private String area;
+  //TODO - Constructors & Getter/Setters
+}
+
+public class Student {
+  private int roll;
+  private String name;
+  private Address local;
+  private Address postal;
+
+  //TODO - Constructors & Getter/Setters
+}
+
+And also write "Test" methods into "StudentTest" class.
+
+package in.abc;
+
+public class Address {
+    private int pin;
+    private String city;
+
+     
+    public Address(String city, int pin) {
+        this.pin = pin;
+        this.city = city;
+    }
+    public Address(int pin, String city) {
+        this(city,pin);
+    }
+    public Address() {
+        this("",0);
+    }
+
+    public int getPin() {
+       return pin;
+    }
+    public String getCity() { return city; }
+    public void setPin(int pin) { this.pin = pin; }
+    public void setCity(String city) { this.city = city; }
+}
+
+
+package in.abc;
+
+public class Student {
+    private int roll;
+    private String name;
+    private Address local, postal;
+
+    public Student() {
+       roll = 0;
+       name = ""; 
+       local = new Address();
+       postal = new Address();
+    }
+
+    public Student(int roll, String name, Address local, Address postal) {
+       this.roll = roll;
+       this.name = name;
+       this.local = local;
+       this.postal = postal;
+    }
+
+    public int getRoll() { return roll;}
+    public String getName() { return name; }
+    public Address getLocal() { return local; }
+    public Address getPostal() { return postal; }
+    public void setRoll(int roll) { this.roll = roll; }
+    public void setName(String name) { this.name = name; }
+    public void setLocal(Address local) { this.local = local; }
+    public void setPostal(Address postal) { this.postal = postal;}
+}
+
+package in.abc;
+
+public class StudentTest {
+   public static void main(String []args) {
+        MyTest.test3();
+   }
+}
+
+class MyTest {
+  static void test1() {
+     Student s1 = new Student();
+     s1.setRoll( 10 );
+     s1.setName("Meena");
+     s1.getLocal().setCity("Mehsana");
+     s1.getLocal().setPin(384001);
+     s1.getPostal().setCity("Patan");
+     s1.getPostal().setPin(233322);
+    System.out.println(s1.getRoll() + " " + s1.getName());
+    System.out.println(s1.getLocal().getCity() + " " + s1.getLocal().getPin());
+    System.out.println(s1.getPostal().getCity() + " " + s1.getPostal().getPin());
+  }
+static void test2() {
+     Student s1 = new Student();
+     s1.setRoll( 10 );
+     s1.setName("Meena");
+     s1.setLocal( new Address() );
+     s1.setPostal( new Address() );
+     s1.getLocal().setCity("Mehsana");
+     s1.getLocal().setPin(384001);
+     s1.getPostal().setCity("Patan");
+     s1.getPostal().setPin(233322);
+    System.out.println(s1.getRoll() + " " + s1.getName());
+    System.out.println(s1.getLocal().getCity() + " " + s1.getLocal().getPin());
+    System.out.println(s1.getPostal().getCity() + " " + s1.getPostal().getPin());
+  }
+static void test3() {
+     Student s1 = new Student();
+     s1.setRoll( 10 );
+     s1.setName("Meena");
+     s1.setLocal( new Address("Mehsana",384001) );
+     s1.setPostal( new Address("Patan",4333333) );
+     print(s1);
+  }
+static void test4() {
+     Student s1 = new Student(10,"Raj",new Address("Mehsana",1000), new Address("Patan",22222));
+     print(s1);
+ }
+ static void print(Student s1) {
+    System.out.println(s1.getRoll() + " " + s1.getName());
+    System.out.println(s1.getLocal().getCity() + " " + s1.getLocal().getPin());
+    System.out.println(s1.getPostal().getCity() + " " + s1.getPostal().getPin());
+ }
+}
+
+Extra test methods :
+
+
+  Address addr = new Address("Mehsana",299933);
+  Student s1  = new Student(1,"Raj",addr,addr); // same address for local & postal
+  Student s2 = new Student(2,"Man",addr, new Address("Patan",22222));
+  -----------------
+
+   Address meh = new Address("Meh",34999);
+   Address pat = new Address("Pat",34922);
+   Studnet s = new Student(1,"A",meh,pat);
+   Studnet t = new Student(3,"B",pat,meh);
+
+Example: Create following TYPES
+
+public class Point {
+   private int x,y;
+   //TODO
+}
+public class Rect {
+   private Point start;
+   private Point end;
+   //TODO
+}
+public class Circle {
+   private Point location;
+   private double radius;
+  //TODO
+}
+
+public class Triangle {
+   private Point one,two,three;
+   //TODO
+}
+
+Example:
+
+class Student {}
+class Exam {
+  private String date;
+}
+class Subject {
+  private String name;
+}
+class ExamSubject {
+  private Exam exam;
+  private Subject subject;
+}
+class StudentExam {
+  private Student student;
+  private ExamSubject exam;
+}
+
+
+
+
+
+
+
+ 

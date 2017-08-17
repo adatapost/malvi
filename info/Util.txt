@@ -1,0 +1,4 @@
+1. Open file explorer from within command prompt Type >start .  or start c:\your\folder
+
+2. Open command prompt from within the file explorer - at path addressbar type "cmd" and press enter
+

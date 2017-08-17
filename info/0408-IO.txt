@@ -1,0 +1,131 @@
+﻿ java.util.Properties class and disk I/O
+ ---------------------------------------
+
+ The "Properties" class is derived from Map but it is a specialized collection where key and
+ value are of "Strings".
+
+ Basically, Java platforms uses this class to persists configuration or settings data. For 
+ clerity, Java platforms uses .properties extension to these files. But we are free to use 
+  our own extension.
+
+ Example: Read the Java SE and JRE settings (system settings)
+
+ 
+        Properties properties = System.getProperties();
+        for(Object key : properties.keySet()) {
+            System.out.println(key +  "  : " + properties.get(key));
+        }
+
+        //Read individual property
+        String fileName = "hello.dat";
+        String userDir = System.getProperty("user.dir");
+        String path = userDir + "\\" + fileName;
+        System.out.println(path);
+ 
+
+ Example: Create your property file
+
+ Code to create a properties (file) :
+
+        Properties properties = new Properties();
+        String fileName = "my.properties";
+        String userDir = System.getProperty("user.dir");
+        String path = userDir + "\\" + fileName;
+
+
+        properties.put("server","192.165.1.1");
+        properties.put("port","5555");
+        properties.put("owner","Mr. Rajesh");
+
+        try(FileOutputStream out=new FileOutputStream(path)) {
+            properties.store(out,"Created by Admin");
+        }catch (Exception ex) {
+            System.out.println(ex);
+        }
+
+ Code to read/load properties (file) :
+
+       Properties properties = new Properties();
+       String path = System.getProperty("user.dir") + "\\my.properties";
+        try(FileInputStream in=new FileInputStream(path)) {
+            properties.load(in);
+        }catch (Exception ex) {
+            System.out.println(ex);
+        }
+        for(Object key: properties.keySet())
+            System.out.println(key + " : " + properties.get(key));
+
+
+Text oriented string - Reader and Writer classes
+------------------------------------------------
+
+   This API is used to construct the text document using various 
+   text encoding schemes - ANSI, UTF-8, Unicode etc and also
+   read the text documents.
+
+
+Note: Always use BufferedXXXXX classes to improve the IO performance.
+
+Example:
+
+       try(BufferedWriter writer = new BufferedWriter(
+                 new FileWriter("c:/javaprg/p.txt"))) {
+             writer.write("This is English text.");
+             writer.write("\r\n");
+             writer.write("આ ગુજરાતી ટેક્સ્ટ છે");
+         }catch (Exception ex) {
+             System.out.println(ex);
+         }
+
+
+        try(BufferedReader reader= new BufferedReader(
+                new FileReader("c:/javaprg/p.txt"))) {
+             String line = null;
+             while( (line=reader.readLine())!=null) {
+                 System.out.println(line);
+             }
+        }catch (Exception ex) {
+            System.out.println(ex);
+        }
+
+Example: Read the url  (Text data)
+
+       String strUrl = "https://www.google.com";
+        try {
+            URL url = new URL(strUrl);
+            HttpURLConnection cn = (HttpURLConnection) url.openConnection();
+
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(cn.getInputStream()))) {
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+
+Example: Download the binary file and save it.
+
+        String strUrl = "https://github.com/adatapost/jade/archive/master.zip";
+        try {
+            URL url = new URL(strUrl);
+            HttpURLConnection cn = (HttpURLConnection) url.openConnection();
+
+            try (BufferedInputStream in = new BufferedInputStream(
+                    cn.getInputStream())) {
+                 byte []buffer = new byte[8000];
+                 int numReads = 0;
+                 try(BufferedOutputStream out =
+                             new BufferedOutputStream(
+                                     new FileOutputStream("c:/javaprg/p1.zip"))) {
+                     while( (numReads = in.read(buffer))>0) {
+                         out.write(buffer,0,numReads);
+                     }
+                 }
+            }
+            System.out.println("DONE!");
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }

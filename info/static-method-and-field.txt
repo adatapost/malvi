@@ -1,0 +1,210 @@
+Static methods and static fields
+--------------------------------
+
+Static keyword is used to create a static methods in "class" TYPE. The main objective of static method is to create a group of related non-instance or utility or similar purpose methods.
+
+Static method if accessible uses "ClassName.StaticMethodName" syntax.
+
+The static field is once created field (we can called it global) and if accessible uses "ClassName.staticFieldName" syntax.
+
+It is important to note that the static methods are also used to set or get the static fields; ie. encapsulate the static fields.
+
+Example:
+
+package in.abc;
+
+class A {
+  public static void print(int n) {
+   System.out.println(n);
+  }
+}
+class B {
+ public static void print(int n) {
+    for(int i=1;i<=n;i++) {
+     System.out.println(i);
+    }
+  }
+}
+class MathInt {
+  public static int abs(int n) {
+     if(n < 0) return n*-1;
+   return n;
+  }
+  public static int add(int n1,int n2) {
+   return n1+n2;
+  }
+}
+class MathFloat {
+  public static float abs(float n) {
+     if(n < 0) return n*-1;
+   return n;
+  }
+  public static float add(float n1,float n2) {
+   return n1+n2;
+  }
+}
+public class StaticExample {
+  public static void main(String []args) {
+      System.out.println(MathInt.abs(-10));
+      System.out.println(MathFloat.abs(-10.22f));
+      A.print(10);
+      B.print(7);
+      System.out.println(MathFloat.add(-10.22f,-22.33f));
+  }
+}
+
+Example: Student class
+
+Student.java
+================
+package in.abc;
+
+public class Student {
+  //instance fields
+  private int roll;
+  private String name;
+  private int english,
+              maths,
+              science;
+
+  //static field
+  private static String school;
+
+  //static block to initialize the school
+  static {
+    school = "J.V School";
+  }
+
+  //constructors - to initialize the object fields
+  public Student {
+     roll = 0;
+     name = "";   // "" but not " "
+     english = 0;
+     maths = 0;
+     science = 0;
+  }
+
+  public Student(int roll, String name, int english, int maths, int science) {
+     this.roll = roll;
+     this.name = name;
+     this.english = english;
+     this.maths = maths;
+     this.science = science;
+  }
+  
+  //Static Getter / setter
+  public static void setSchool(String school) {
+     Student.school = school;
+  }
+  public static String getSchool() { return school; }
+
+  //instance getter & setter
+
+  public int getRoll() { return roll; }
+  public void setRoll(int roll) { this.roll = roll; }
+  
+  public String getName() { return name; }
+  public void setName(String name) { this.name = name; }
+
+  public int getEnglish() { return english; }
+  public void setEnglish(int english) { this.english = english; }
+  
+  public int getMaths() { return maths; }
+  public void setMaths(int english) { this.maths = maths; }
+
+  public int getScience() { return science; }
+  public void setScience(int english) { this.science = science; }
+
+  //Extra methods
+  public int getTotal() {
+    return maths + english + science;
+  }
+
+  public double getPercent() {
+     return getTotal() / 3.0;
+  }
+
+  public String getGrade() {
+     double per = getPercent();
+     if(per>=80) return "A";
+     if(per>=70) return "B";
+     if(per>=60) return "C";
+     return "D";
+  }
+}//End of class
+
+
+StudentTest.java
+==================
+
+package in.abc;
+
+public class StudentTest {
+  public static void main(String []args) {
+     test5();
+  }
+  //Test methods
+  //1
+  static void test1() {
+     System.out.println( Student.getSchool() );
+     Student s1 = new Student(10,"Meena",66,77,88);
+      s1.setEnglish(99);
+     System.out.println( s1.getTotal() );
+     System.out.println( s1.getPercent() );
+     System.out.println( s1.getGrade() );
+  }
+ //2
+   static void test2() {
+   
+     Student s1 = new Student(10,"Meena",66,77,88);
+     System.out.println("School.........: " + Student.getSchool() );
+     System.out.println("Roll...........: " + s1.getRoll());
+     System.out.println("Name...........: " + s1.getName());
+     System.out.println("English........: " + s1.getEnglish());
+     System.out.println("Science........: " + s1.getScience());
+     System.out.println("Maths..........: " + s1.getMaths());
+
+     System.out.println("Total..........: " + s1.getTotal());
+     System.out.println("Percent........: " + s1.getPercent());
+     System.out.println("Grade..........: " + s1.getGrade());
+  }
+ //3.
+   static void test3() {
+      Student.setSchool("ABC School");  
+      Student s1 = new Student(10,"Meena",66,77,88);
+      Student s2 = new Student(30,"Seena",77,99,88);
+      s1.print();  
+      s2.print(); 
+  }
+ 
+ //4. 
+ static void test4() {
+     java.util.Scanner scan = new java.util.Scanner( System.in );
+     int no;
+     String name;
+     double per;
+     System.out.print("Name : ");
+     name = scan.nextLine();
+     System.out.print("Enter the no : ");
+     no = scan.nextInt();
+     System.out.print("Percentage : ");
+     per = scan.nextDouble();
+     System.out.println(no + " " + name + " " + per);
+  }
+
+//5. 
+ static void test5() {
+     java.util.Scanner scan = new java.util.Scanner( System.in );
+     Student s1 = new Student(); 
+     s1.setName( scan.nextLine() ); // scan.nextLine() - string with whitespaces
+     s1.setRoll( scan.nextInt() );  // scan.next() - string without whitespaces
+     s1.setEnglish( scan.nextInt() );
+     s1.setMaths( scan.nextInt() );
+     s1.setScience( scan.nextInt() );
+     s1.print();
+  }
+}//End of class
+
+ 
+ 
+  

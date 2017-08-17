@@ -1,0 +1,342 @@
+PHP PDO (PHP Data Object)
+==========================
+=> It is general purpose database integration class library to connect with any RDBMS product
+=> We will have to use "PDO" primary class and its methods
+
+=> Steps to connect the mysql database, execute queries and return the result (also error object)
+
+<?php
+
+ $cn = new PDO("mysql:host=localhost;dbname=emp_db","root","");
+ //compile the sql statement
+ $st = $cn->prepare("insert into emp values (?,?,?)"); //assume that emp has three columns
+ 
+ //set placeholders and execute the query
+ $st->execute( array(value1,value2,value3) );
+ 
+ //returns error or status object
+ $err = $st->errorInfo();
+ var_dump( $err );  // show error array temporary
+ 
+Example: Create 'product_db" database with following tables.
+
+create table category
+(
+    category_id int primary key AUTO_INCREMENT,
+    category_name varchar(100) not null unique 
+)
+
+create table product
+(
+    product_id int PRIMARY KEY AUTO_INCREMENT,
+    product_name varchar(100) not null,
+    unit varchar(10) not null,
+    rate decimal(18,2),
+    available bit,
+    category_id int not null,
+    foreign key(category_id) REFERENCES category(category_id)
+)
+
+Step-1 Create "functions.php" file in your webapp root.
+
+<?php
+
+ //Database functions
+
+ function getCn() {
+   return new PDO("mysql:host=localhost;dbname=product_db","root","");
+ }
+
+ //To execute the insert/delete/update query
+ function execute( $sql, $array = null) {
+    $cn = getCn();
+    $st = $cn->prepare($sql);
+    $st->execute($array);
+    $err = $st->errorInfo();
+    return !(0 + $err[0]);  //true if success
+ }
+ //fetchall
+ function rows( $sql, $array = null) {
+    $cn = getCn();
+    $st = $cn->prepare($sql);
+    $st->execute($array);
+    return $st->fetchall(PDO::FETCH_ASSOC);
+ }
+
+ //fetch
+ function row( $sql, $array = null) {
+    $cn = getCn();
+    $st = $cn->prepare($sql);
+    $st->execute($array);
+    return $st->fetch(PDO::FETCH_ASSOC);
+ }
+
+ //Request methods
+ function post($key) {
+    if(isset($_POST[$key])) return $_POST[$key];
+    return ""; 
+ }
+function get($key) {
+    if(isset($_GET[$key])) return $_GET[$key];
+    return ""; 
+ }
+
+Step-2 Create category_controller.php and product_controller.php 
+
+
+
+category_controller.php
+-------------------------
+<?php
+ require_once "functions.php";
+
+ $category_id = 0 + post("category_id");
+ $category_name = post("category_name");
+ $cmd = post("cmd");
+ $result = array("status"=>false,
+                 "message"=>"",
+                 "data"=>null);
+ 
+
+
+ if($cmd == "add") {
+  $result["status"] = execute("insert into category (category_name) values (?)", 
+                               array( $category_name ) );
+  $status["message"] = $result["status"] ? "Added" : "Can't add";
+ }
+ if($cmd == "update") {
+  $result["status"] = execute("update category set category_name=? where category_id=?", 
+                               array( $category_name, $category_id ) );
+  $status["message"] = $result["status"] ? "Updated" : "Can't Update";
+ }
+ if($cmd == "delete") {
+  $result["status"] = execute("delete from  category where category_id=?", 
+                               array( $category_id ) );
+  $status["message"] = $result["status"] ? "Deleted" : "Can't Delete";
+ }
+ 
+ if($cmd == "rows") {
+    $result["data"] = rows("select * from category");
+    $result["status"] = is_array($result["data"]);
+ }
+
+if($cmd == "row") {
+    $result["data"] = rows("select * from category where category_id=?",array($category_id));
+    $result["status"] = is_array($result["data"]);
+ }
+header("content-type: application/json");
+echo json_encode($result);
+
+
+product_controller.php
+----------------------
+
+
+
+
+Step-3 Create Java client app with JSON support  (Also add following components in Android apps)
+
+0. U.java *Uttility class
+--------------------------
+
+package in.abc;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class U {
+    public final static String URL = "http://localhost:8010/product-app";
+
+    public static String post(String urlStr, String data) {
+        try{
+            java.net.URL url = new URL(urlStr);
+            HttpURLConnection cn = (HttpURLConnection) url.openConnection();
+            cn.setDoOutput(true);
+            cn.getOutputStream().write(data.getBytes());
+            cn.getOutputStream().flush();
+
+            return  getString(cn.getInputStream());
+
+        }catch (Exception ex) {
+            System.out.println("Error in U::post() " + ex);
+        }
+        return "";
+    }
+
+
+    public static String getString(InputStream inputStream) {
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line = null;
+            StringBuilder sb = new StringBuilder();
+
+            while (( line = reader.readLine())!=null) {
+                sb.append(line);
+            }
+           return  sb.toString();
+        }catch (Exception ex) {
+            System.out.println("Error in U::getString() : " + ex);
+        }
+        return  "";
+    }
+
+}
+
+
+
+1. Category
+
+package in.model;
+
+/**
+ * Created by kvprajapati on 8/16/2017.
+ */
+public class Category {
+    private int categoryId;
+    private String categoryName;
+
+    public Category() {
+    }
+
+    public Category(int categoryId, String categoryName) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public Category(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "categoryId=" + categoryId +
+                ", categoryName='" + categoryName + '\'' +
+                '}';
+    }
+}
+
+
+
+2. CategoryBao
+
+package in.model;
+
+import in.abc.U;
+import in.json.JSONArray;
+import in.json.JSONObject;
+
+import java.util.ArrayList;
+
+/**
+ * Created by kvprajapati on 8/16/2017.
+ */
+public class CategryBao {
+    private static final String url = U.URL + "/category-controller.php";
+
+    public static boolean add(Category category) {
+        String data = String.format("category_name=%s&cmd=%s",
+                category.getCategoryName(), "add");
+        String result = U.post(url, data);
+
+        JSONObject object = new JSONObject(result);
+        return object.getBoolean("status");
+    }
+
+    public static boolean update(Category category) {
+        String data = String.format("category_name=%s&category_id=%d&cmd=%s",
+                category.getCategoryName(),
+                category.getCategoryId(),
+                "update");
+        String result = U.post(url, data);
+
+        JSONObject object = new JSONObject(result);
+        return object.getBoolean("status");
+    }
+
+    public static boolean delete(Category category) {
+        String data = String.format("category_id=%d&cmd=%s",
+                category.getCategoryId()
+                , "delete");
+        String result = U.post(url, data);
+
+        JSONObject object = new JSONObject(result);
+        return object.getBoolean("status");
+    }
+
+    public static ArrayList<Category> gets() {
+        ArrayList<Category> list = new ArrayList<>();
+
+        String data = String.format("cmd=%s",
+                "rows");
+        System.out.println(url);
+        String result = U.post(url, data);
+        JSONObject object = new JSONObject(result);
+        JSONArray array = object.getJSONArray("data");
+
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject obj = array.getJSONObject(i);
+            Category c = new Category(obj.getInt("category_id"), obj.getString("category_name"));
+            list.add(c);
+        }
+        return list;
+    }
+
+    public static Category get(Category category) {
+        ArrayList<Category> list = new ArrayList<>();
+
+        String data = String.format("category_id=%d&cmd=%s",
+                category.getCategoryId(),
+                "rows");
+        String result = U.post(url, data);
+        JSONObject object = new JSONObject(result);
+        JSONObject obj = object.getJSONObject("data");
+        Category c = new Category(obj.getInt("category_id"), obj.getString("category_name"));
+        return c;
+    }
+}
+
+
+
+3. Product
+4. ProductBao
+
+5. Test Cases for Category
+---------------------------
+
+        Category c = new Category();
+        c.setCategoryName("Keyboard");
+        CategryBao.add(c);
+
+        c.setCategoryId(2);
+        c.setCategoryName("Drawing Pencil");
+        CategryBao.update(c);
+
+
+        c.setCategoryId(20);
+        c = CategoryBao.get(c);
+        if(c==null) s.o.p("Not found"); else s.o.p("found");
+
+
+        ArrayList<Category> cats= CategryBao.gets();
+        for(Category c1: cats) {
+            System.out.println(c1);
+        }

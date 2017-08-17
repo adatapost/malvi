@@ -1,0 +1,60 @@
+The class 
+==========
+
+   => The term "class" stands for "datatype". OR it is second name of datatype or It is datatype.
+      
+   What is datatype? Data type describes the data and actions on the data. 
+    For example,  10/10/2007    describes the date datatype structure
+		  "Hello"       describes the string and so on.
+
+
+  => It is a blueprint of an object.
+  => It is an identity of an object.
+  => The "class" keyword in Java is used to define a new class from the scratch or uses existing class to
+     extends (improve) its class. 
+  => A class can have one or more bahaviours; normally these behaviours are implemeted via "interface types" in Java.
+     [In theory, it is really impossible to create a class without using/adding behaviours].
+     For example, (see doc) the java.lang.String is created using CharSequence, Comparable amd Serializable interfaces.
+
+  => A class definition might contains following members:
+
+       1. static fields and static methods
+       2. instance fields and instance methods
+       3. static blocks
+       4. instance blocks
+       5. nested types (nested classes)
+       6. inner types  (they are different than nested)
+
+  static fields   -- "static" keyword if used with field declaration then it will use "Heap" memory and
+  --------------      will be created automatically when that class is used very first time in your program and
+			it will remains in memory till the programm is running. (Global variable in C language)
+
+  instance fields -- a field created without adding "static" modifier is instance field. An object reference is
+			required to access the instance field. The "new" keyword creates an object (ie. allocate
+			the memory for instance fields only).
+
+Example:
+package my.app;
+ 
+class Foo {
+    static int no;  //static or global
+    int no1;        //instance
+}
+ 
+public class Test {
+  public static void main(String []args) {
+       System.out.println(Foo.no); //0
+       Foo.no = 100;
+
+       Foo a = new Foo();
+       Foo b = new Foo();
+
+       a.no1 = 10;
+       b.no1 = 20;
+
+       System.out.println(a.no1 + " " + b.no1 + " " + Foo.no);
+ }                                                        
+}
+   
+
+   

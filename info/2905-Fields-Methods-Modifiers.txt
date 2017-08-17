@@ -1,0 +1,494 @@
+Access modifiers
+=================
+
+Access modifiers are used to set visibility of TYPES (class, interface, annotation, enum) and their members.
+
+In Java, we've four access modifiers:
+
+1. public - public entities are visible to everywhere. There is not access restrictions for the public members and
+		public TYPES.
+
+2.        - package level private (or default ) access modifier. These entities are only visible inside the package
+		in which they are created/defined. These entities are not visible outside the owner package.
+
+3. private - private entities are only visible inside the TYPE in which they are created.
+
+4. protected - protected entities have same access as "private" but they are also visible in "Sub classes 		(inheritance)".
+
+
+NOTE:
+   Abstraction and encapsulation 
+   ------------------------------
+   "An abstraction is a mechanism to create an outline between the creator of the code and user of the code". In other
+    word it hides complixities and expose the simplicities of the code.
+
+    When we use "abstraction" theory/mechnism in our programming, we achieve the encapsulation; the method encapsulation 	and data encapsulation. (we can also read as "Method abstraction and data abstraction).
+
+     For instance, "java.lang.String" is an example of  "Data encapsulation" in which we've number of methods (actions)
+     available for us or operator.
+
+
+NOTE: The entry point method main - public static void main(String []args) { }  OR
+                                    public static void main(String args[]) { }
+      -------------------------------------------------------------------------
+      There are two categories of "class" - Primary class (a class that contains an entry point method) and
+      Data class (a class that is used to represent the data and associate action).
+
+   Example: 
+>notepad Sample.java
+package my.app;
+
+class Date {
+  int d,m,y;
+}
+
+class Sample {
+   public static void main(String []args) {
+       Date x = new Date(); // allocate memory for d,m,y (instance members) and returns it memory address; an object
+			    // memory reference.
+
+       Date y = new Date(); // again, a new memory area will be created and returns memory ref of that object.
+
+       x.d = 10; 
+       x.m = 2;
+       x.y = 2017;
+
+       y.d = 30;
+       y.m = 5;
+       y.y = 2001;
+
+       System.out.printf("\n%d-%d-%d",x.d,x.m,x.y);
+       System.out.printf("\n%d-%d-%d",y.d,y.m,y.y);
+  }
+}
+Compile the code:
+>javac Sample.java  -d   .  
+Run the code
+>java my.app.Sample
+   
+   
+In above example, if we assign some sort of wrong value to the objects properties like:
+    x.d = 100; 
+    x.m = 56;
+  will produce incorrect result or inappropriate behaviour and it might corrupt the data structure. Now, what steps are to be taken in order to avoid such issues. The only answer is the use of "Access modifiers"; we can create private fields and encapsulate these private fields via public methods (mostly getter and setters).
+
+class Date {
+  private int d,m,y;
+}
+Now, no one can access these fields.
+    Date x = new Date();
+    x.d = 100; <- error
+
+And here is example to encapsulate the "d"
+ 
+ class Date {
+   private int d,m,y;
+   public int setDay(int v) {
+     if(v>=1 && v<=31) {
+       d = v;
+     }
+   } 
+   public int getDay() { return d; }
+ }
+
+ and your code in main() method will be:
+    Date x = new Date();
+    x.setDay(100);
+    System.out.println(x.getDay());
+
+
+The package statement, importing the package and protecting the TYPES
+--------------------------------------------------------------------
+
+ What is a "package"?
+
+    A "package" is a mechanism to create a group of related TYPES and keep one group of TYPES distincts 
+    from another group of TYPES to avoid name mangling (conflict) or to enhance the names of our TYPES.
+
+    The "package" statement is used to create a package which must be appear at the very first line of your
+    source code.
+
+    Each and every TYPE in Java must be created into the "named" package because the Java compiler create an
+    anonymous package which points to the current directory when you not specify the "package" statement in your
+    source code.
+
+    In other words, if package statement is not mentioned then the compiler & JVM chooses the current directory
+    name as a "package" name.
+
+    In fact, the package name is a qualifying name for the TYPES.
+
+    The "package" name must be written into lowercase letter.
+
+    The "package" name should be reverse of your domain name. 
+		e.g if your domain name is "malvi.in" then your package name should be "in.malvi".
+		    www.oracle.com is oracle's domain and their classes are qualified with "com.oracle.OracleConnection"
+                    www.apache.org will be used as org.apache and so on.
+
+     It is good practice to use two level (two step) package name. However, you can add some extra level to your TYPES
+	too.
+
+For instance, suppose you're going to create an Android app and your app name will a package name:
+
+in.malvi  <---- This is your app's main / root package
+in.malvi.ui   <-- UI classes
+in.malvi.service <--- Service classes
+in.malvi.report.html  <--- Report that generate HTML content
+in.malvi.report.pdf   <----PDF Report classes
+in.malvi.extra        <---- Extra/misc classes
+		
+
+     The "package level private access" allow us to add code security; the package level private access hides the
+     types and they are only visible inside the package and are not visible the outside of the package.
+
+Example:
+
+1. create a folder at c:\pqr and add following code
+
+c:\>md pqr
+c:\>cd pqr
+c:\pqr>notepad Emp.java
+
+package in.malvi;
+
+class Emp {
+  public Emp() {
+    System.out.println("Emp Constructor!!!"); 
+  }
+}
+
+c:\pqr>javac   Emp.java   -d    .
+
+
+2. create a folder at c:\abc and add following code
+
+c:\abc>notepad Test.java
+
+package app;
+public class Test {
+ public static void main(String []args) {
+   //Create an object of in.malvi.Emp class
+   in.malvi.Emp emp = new in.malvi.Emp();
+ }
+}
+
+c:\abc>javac -cp .;c:\pqr Test.java  -d  .
+
+   -cp stands for CLASSPATH and  .; means current folder and c:\pqr tells the Java compiler to look classes at
+         .;c:\pqr folders. (You can add extra class path to the command line as required).
+
+To run the code,
+c:\abc>java -cp  .;c:\pqr app.Test    
+
+    We've to specify the CLASS PATH for (-cp) the JVM so the classloader service can load/fetch the classes from the     disk.
+
+   **** In above statement, your program throws an error "IllegalAccessError" because of the class Emp has "package
+        level private access" and it cannot be visible outside the in.malvi package.
+
+  So, you first go to the "c:\pqr>notepad Emp.java", modify the code (add public class Emp) and recompile it. After recompiling, go to the c:\abc> and run your code.
+
+You can also use -cp c:\pqr;c:\abc app.Test  to execute the code from anywhere (drive or directory).
+
+c:\>java -cp c:\pqr;c:\abc app.Test
+
+Importing the package
+-----------------------
+
+To import a package or TYPE means we instruct the Java compiler to add "package" qualifier of those TYPES which are used without package qualifiers. This feature help us to use only the name of "TYPE" instead of writing fully qualified  type name.
+
+Please change the "Test.java" code 
+
+package app;
+
+import in.malvi.Emp;
+
+public class Test {
+  public static void main(String []args) {
+     in.malvi.Emp e1 = new in.malvi.Emp(); // Its OK to use fully qualified type name 
+     Emp e2 = new Emp();                   // But, now you can use only TYPE name instead of fully qulified name.
+  }
+}
+
+The Java compiler will replace "Emp e2 = new Emp()" statement with,
+     in.malvi.Emp e2 = new in.malvi.Emp(); automatically.
+ 
+
+Access modifiers for the TOP-LEVEL TYPES
+----------------------------------------
+
+The "TOP-LEVEL" TYPES; TYPES which are not nested are called TOP-LEVEL TYPE; must be either "package level private" or "public" and if no such modifier is specified then the default is "package level private".
+
+If TYPE access is "public" then the source file name must be same as the TYPE name. So, you cannot create two public TOP-LEVEL TYPES in a source file.
+
+Following code will not compiled:
+
+package app;
+
+private class A{ } //not valid
+protected class B { } // not valid
+class C {} // valid
+public class D {} //valid if "D.java" file name is used
+
+Access modifiers for the NESTED TYPES
+--------------------------------------
+The nested and inner TYPES have following declared accessibilities:
+
+TYPENAME		DEFAULT			CAN BE CHANGED
+--------------------------------------------------------------------
+class			package level private	private, public, protected, package level private
+
+interface		public			Can't changed
+
+annotation		public			Can't changed
+
+enum			public			private, public, package level private
+
+Naming conventions for the package and TYPES and their members
+--------------------------------------------------------------
+Following naming conventions are strictly followed by the developers (Java developers) all over the world. It is important to note that the naming conventions are not rules but it is a guideline to design the TYPES and members.
+
+In fact, Java Platforms - JavaSE, JavaEE, JavaFx, JavaME, and other open source platforms from goole, apache, redhat,
+IBM and many more uses the following conventions.
+
+1. The "package" name must be in lower case letter
+2. Don't add underscore (_) in package name.
+	e.g package my_app; 		<-- is bad practice
+3. Don't use "java" or "javax" package name for our custom TYPES. The "java" and "javax" are reserved packages for Java
+	platforms.
+4. The Java compiler and JVM automatically imports the "java.lang" package so we don't have to import the TYPES of the
+   java.lang package explicitly. ( The java.lang package is also known as "default" package).
+5. The package name should be reverse of your domain name.
+
+6. The TYPE name must be in "PascalCase" or "ProperCase"; capitalize the first letter of each word and keep rest 	character lowercased.
+7. Don't add underscore in TYPE name.
+
+public class MyApplication {} //Valid
+public interface Student { }   //Valid
+public enum Planets { } // valid
+public class StudentProgress  { } // valid
+
+8. Name of the fields and methods must be written in "camelCase"; The first word must be in lowercase and then 	capitalize the first letter of each word.
+
+public class StudentAttendence {
+  private int roll;
+  private String firstName;
+  private String lastName;
+  private java.util.Date attendenceDate;
+
+  public void setRoll( int roll ) { ... }
+  ...
+}
+
+9. Use UPPER LETTER to create constants (Named constants). You can also use _ (underscore) too.
+
+	e.g   System.out.println(Integer.MAX_VALUE);
+
+   To create a constant,
+
+      final int MAX = 1000;
+
+10. The "opening curly brace {" must appear with the definition text or very same line where your TYPE or method 
+    name appears.
+
+    This behaviour will be used for any block statement (loops, if, switch etc)
+
+    public class SampleApp {
+      public static void doSomething(int no) {
+         //TODO
+      }
+    ...
+    }
+
+    Leave only one space after the name of class or block statement.
+ 
+    public class Student { } //valid  	
+    public class Student   { } //Valid but not a good practice
+    public class Student       //Valid butr not a good practice
+     {
+      //
+     }                        
+
+How to design the class? Or What are the common or least ingradient of the class?
+-----------------------------------------------------------------------------------
+
+In order to design a class TYPE, we must have following guideline:
+
+1. The "fields - static & instance" must be private. By "private" modifier these fields are not visible to others and 	hence no one directly manipulate the content of object.
+
+2. To encapsulate the "private fields" (or for some actions), we need to define public methods (in certain case they    might have private or protected or package level private but mostly public).
+
+   These methods uses a standard naming conventions; a method that is used to assign value to the object or it is used
+   as to write or store data then it must be created with "set" prefix; a method that is used to retrieve a value
+   then this method must be created with "get" prefix.
+
+   These methods are commonly known as "getter/setter" or properties methods.
+
+3. Your class must have necessary public (or you can have private, package level private ) constructors.
+   
+   What is a constructor method? It is an instance method which will be called automatically when we create an object.
+   The name of constructor must be same as it class name and it cannot be inherited in sub-classes.
+   If you do not write a constructor in your class then the Java compiler will add a "parameterless" constructor
+    automatically.
+
+    public class Student {
+    }                           In this class, the compiler will adds a parameterless constructor.
+
+    public class Student {      And in this case, the compiler will not create a constructor.
+       public Student() {
+       }
+    }
+4. You can also add instance and static blocks into your class.
+
+   The "instance block" is a code body that will be run/executed when you create an object. 
+
+   The "static block" is a code body that will be run/executed only once when that particular class is used
+   very first time in current execution of program. 
+
+Example: Demonstrate the use of "blocks" and "constructors"
+
+package in.abc;
+
+class A {
+   {   // Instance block
+      System.out.println("A1");
+   }
+
+  static {  //static block
+     System.out.println("Hello from A; First");
+   }
+  //Constructors
+  public A() {
+    System.out.println("Parameterless constructor");
+  }
+  {   // Instance block
+      System.out.println("A2");
+   }
+  public A(int n) {
+    System.out.println("Int Parameter constructor");
+  }
+ 
+  {   // Instance block
+      System.out.println("A3");
+   }
+
+   static { //static block
+     System.out.println("Hello From A; second");
+   }
+}
+
+public class Test {
+  public static void main(String []args) {
+       System.out.println("Inside the main method...");
+        A x = new A();
+        A y = new A(10);
+        A z = new A();
+  }
+  static {
+    System.out.println("Hello from Test");
+  }
+}
+
+
+
+Example: A "Student" type has roll and name fields. Write a class definition using above mentioned guideline.
+
+|---------------------|
+| Student             |
+|---------------------|
+| - roll: int         |
+| - name: String      |
+|---------------------|
+| + Create()          |
+| + getRoll() : int   |
+| + setRoll(int)      |
+| + getName() : Str   |
+| + setName(Str)      |
+|---------------------|
+
+ Note: A class diagram uses + which indicates public access, - stands for private access, Create() stands for  constructors.
+
+>notepad Student.java
+
+package in.abc;
+
+public class Student {
+  private int roll;
+  private String name;
+  
+  //Constructors
+  public Student() {
+    roll = 0;
+    name = "";   //Empty string
+  }
+
+  public Student(int roll, String name) {
+     this.roll = roll;    // this variable holds memory reference of active object and here it is used to
+     this.name = name;    // separate the field from the parameter.
+  }
+
+  public Student(String name, int roll) {
+     this(roll,name);    // this variable invoke the 2nd constructor. It means we can call another constructor
+			  // of the very same class using this() syntax.
+  }
+ 
+  public Student(Student obj) { 
+    this(obj.roll, obj.name);
+  } 
+
+  //Setter and Getter
+
+  public int getRoll() {
+    return roll;
+  }
+  public String getName() {
+     return name;
+  }
+  public void setRoll(int roll) {
+     this.roll = roll;
+  }
+  public void setName(String name) {
+     this.name = name;
+  }
+}//End of class
+
+>notepad Test.java
+
+package in.abc;
+public class Test {
+  public static void main(String []args) {
+     testMethod1();
+     testMethod2();
+     testMethod3();
+     testMethod4();
+  }
+  static void testMethod1() {
+     Student s = new Student();
+     s.setRoll(10);
+     s.setName("Mr.A");
+     System.out.println(s.getRoll() +  "  " + s.getName() );
+  }
+  static void testMethod2() {
+     Student s = new Student(10,"Mr.A");
+     System.out.println(s.getRoll() +  "  " + s.getName() );
+  }
+  static void testMethod3() {
+     Student s = new Student("Mr.A",20);
+     System.out.println(s.getRoll() +  "  " + s.getName() );
+  }
+  static void testMethod4() {
+     Student m = new Student(10,"Mr.A");
+     Student s = new Student(m); //Copy the object's content
+     System.out.println(s.getRoll() +  "  " + s.getName() );
+     System.out.println(m.getRoll() +  "  " + m.getName() );
+  }
+}//End of class
+ 
+
+Example: A class student has following instance fields,
+         roll, name and marks of three subjects
+
+         There is a static field named "school of string type".
+
+         Write appropriate constructor definitions, getter/setter and extra method as you would like to add.
+
+
+ 

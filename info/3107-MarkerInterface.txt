@@ -1,0 +1,133 @@
+The "Marker" Interfaces
+===============================================================
+
+In Java Platforms, we've some interfaces without having declared methods (abstract methods) and these types of interfaces are used to inform or instruct the underlying systems like - compiler or JVM.
+
+For instance, java.lang.Cloneable is a marker interface which tells the JVM that the class implements "Cloneable" interface support object cloning (create a copy of existing object). It is important to note that not all Java objects support cloning.
+
+So, in order to achieve the cloning:
+
+  1. Implements the "Cloneable" and 
+  2. Override to Object's clone() method.
+
+
+Example: Shallow copy of an object by calling super's clone() - Only first lever object will be
+created by the JVM but if there is composition then these composed objects shared by two cloned instances.
+
+package in.abc;
+
+class A implements Cloneable {
+    public int no;
+
+    //Override the clone method
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();   //Shallow copy of existing object
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        A p = new A();
+        A q = null;
+        p.no = 100;
+
+        try {
+            q = (A) p.clone();  // Shallow Copy
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(p.no + " " + q.no);
+        q.no = 200;
+        System.out.println(p.no + " " + q.no);
+    }
+}
+
+Example: (Update) 
+
+class A implements Cloneable {
+    public int []nos = { 10,20,30};
+
+    //Override the clone method
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        // return super.clone();   //Shallow copy
+        //Deep copy
+        A temp = new A();
+        temp.nos[0] = nos[0];
+        temp.nos[1] = nos[1];
+        temp.nos[2] = nos[2];
+
+        return temp;
+    }
+}
+
+Above code explains how deep cloning works! We need to write necessary code
+to create objects (chains of object) and set appropriate default values
+from current object properties.
+
+
+Design Pattern - Create a user-defined clone method
+----------------------------------------------------
+
+-> This kind of method need not casting
+-> We can easily update the code but it will create our code
+   less secure becase anybody can create a copy of an object.
+
+Example:
+
+public class Point {
+   private int x,y;
+   //getter,setter
+
+   //Constructor
+   public Point() { }
+   public Point(int x,int y) { .. }
+
+   //Copy the object - method 1
+   public Point(Point point) {
+       x = point.x;
+       y = point.y;
+   }
+
+   //Copy the object - method 2
+   public Point copy() {
+       return new Point( x, y);
+   }
+}
+
+code in main:
+
+     //Method - 1
+     Point pt1 = new Point(10,20);
+     Point pt2 = new Point(pt1);
+     pt1.setX(40);
+     pt2.setX(99);
+     System.out.println( pt1 + " " + pt2); //override toString()
+
+
+     //Method - 2
+     Point pt1 = new Point(20,30);
+     Point pt2 = pt1.copy();
+     pt1.setX(40);
+     pt2.setX(99);
+     ....
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

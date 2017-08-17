@@ -1,0 +1,179 @@
+The java.io package
+====================
+
+ IMPORTANT: IO classes are subject to use huge amount of memory resources so it is recommended to
+            call the "close()" method once the associate IO operation finised. It is better to 
+            choose "try-with-resource" syntax and all IO classes are AutoCloseable.
+
+  In this package we've two family of IO whose members are scatter all around the Java SE, EE, ME and
+  Android. In this package we will use IO classes which are independent of the devices -- keyboard,
+  monitor, network, disk, crypto, compress, sound, video, audio and so on.
+
+
+  [NOTE: In general, everything is IO]
+
+  The java.io.InputStream and java.io.OutputStream classes
+  --------------------------------------------------------
+   
+  These "InputStream" and "OutputStream" are two abstract classes and sub-classes
+  of these classes allow read and write byte wise from or into the stream respectively. 
+
+  Any class you see that suffix the "InputStream" are sub-classes of InputStream.
+    e.g FileInputStream, ObjectInputStream etc.
+
+  Any class you see which is suffixed by "OutputStream" are sub-classes of OutputStream.
+    e.g FileOutputStrem, ObjectOutputStream, ByteArrayOutputStream etc.
+
+   
+  The java.io.Reader and java.io.Writer classes
+  ----------------------------------------------
+  "Reader" and "Writer" are two abstract classes. These family classes are
+  used to write or read the "Text or Character" -- ANSI, Unicode etc.
+
+  Sub-classes of "Reader" have "Reader" suffix and "Writer" has "Writer" suffix.
+
+   e.g.  TextWriter, TextReader, FileWriter, XmlWriter, XmlReader etc.
+
+   
+  The java.io.InputStreamReader and java.io.OutputStreaWriter classes
+  -------------------------------------------------------------------
+ 
+  The InputStream and OutputStream are natual way of hardware to perform read and write
+  in byte sequence.
+
+  Sometimes, we want to use the InputStream & OuputStream with "Reader" and "Writer" respectively and
+  these two classes namely InputStreamReader transform InputStream to Reader and OutputStreamWriter  
+  transform OutputStream to Writer.
+
+
+  The buffered classes - BufferedReader, BufferedWriter, BufferedInputStream, 
+   BufferedOutputStream
+  ----------------------------------------------------------------------------
+  These "BufferedXXXXXXXX" classes improve the IO performance by using
+  intermediate RAM.
+
+   For instance,
+
+   IO without buffer,
+
+      Java Program -----> Write ------> Disk
+                   <----- Read  <-----
+       [RAM]                            [Seconday Storage]
+
+       Note that the speed and latency of RAM is too higher than Seconday 
+       storage to these kind of operation are slow down by the disk or seconday
+       storages.
+
+   IO with buffer,
+
+     Java Program -----> Write ------> Buffer      ---------> Disk
+                   <----- Read  <----- (appro 4096) <--------
+           RAM                          RAM                    Seconday Storage
+
+      In this situation, the Java program write or read bytes/text to/from the
+      RAM (buffer - reserved memory) instead of disk and also JVM is incharge
+      of write and read into/from the disk.
+
+Example: Without Buffer - Write some bytes and then read them
+
+      try(FileOutputStream out = new FileOutputStream("c:/javaprg/t.txt")) {
+            //Write a byte
+            out.write(65);
+            out.write(48);
+            byte []ar = "Hello".getBytes();
+            out.write(ar);
+        }catch (Exception ex) {
+            System.out.println(ex);
+        }
+
+        try(FileInputStream in = new FileInputStream("c:/javaprg/t.txt")) {
+             byte []ar = new byte[4];
+             int numReads;
+
+             while( (numReads = in.read(ar)) >0) {
+                 String str = new String(ar,0,numReads);
+                 System.out.println(numReads + " " + str);
+             }
+        }catch (Exception ex) {
+            System.out.println(ex);
+        }
+
+Example: With Buffer
+
+   try(BufferedOutputStream out = new BufferedOutputStream(
+                           new FileOutputStream("c:/javaprg/t.txt"))) {
+       //as per previous example
+   }....
+
+  try(BufferedInputStream in = new BufferedInputStream(
+                          new FileInpuStream("c:/javaprg/t.txt"))) {
+       //as per previous example
+   }  
+
+   
+ Example: Write and read the "primitive" values using DataOutputStream and DataInputStream classes
+ -------------------------------------------------------------
+
+  Program to save roll, name and percent of a student
+
+      try(DataOutputStream out =
+                   new DataOutputStream(
+                           new  BufferedOutputStream(
+                                   new FileOutputStream("c:/javaprg/t.txt")))) {
+             out.writeInt(10000);
+             out.writeUTF("Meena");
+             out.writeDouble(95.66);
+        }catch (Exception ex) {
+            System.out.println(ex);
+        }
+
+        try(DataInputStream in =
+                    new DataInputStream(
+                            new BufferedInputStream(
+                                    new  FileInputStream("c:/javaprg/t.txt")))) {
+            System.out.println(in.readInt());
+            System.out.println(in.readUTF());
+            System.out.println(in.readDouble());
+        }catch (Exception ex) {
+            System.out.println(ex);
+        }
+   
+ Example : Serialization and Deserialization - Write an object to the stream is called serialization and read bytes and form an object is called Deserialization. The classes ObjectOutputStream and ObjectInputStream write or read objects of those classes which are marked as "Serializable".
+
+Not all objects are serializable. Only the Serializable classes supported by the Object/InputOutput classes.
+
+Step-1 Create Serializable class
+
+public class Product implements Serializable { .... }
+
+Step-2 Write/Read object
+
+try(ObjectOutputStream out = new ObjectOutputStream( new FileOutputStream(...))) {
+  Product product = new Product(10,"Pencil");
+  out.writeObject(product);
+}....
+
+try(ObjectInputStream in = new ObjectInputStream( new FileInputStream(...))) {
+ 
+   Product p = (Product) out.readObject();
+   System.out.println(p.getId() + " "+ p.getName());
+}....
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

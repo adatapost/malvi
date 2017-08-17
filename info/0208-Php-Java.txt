@@ -1,0 +1,108 @@
+How to access the "PHP" resources via Java code?
+================================================
+
+ First of all we need to use java.io and java.net package classes to request the web-resources and
+ also pass request data and receive the output (or response).
+
+Step-1  Assume that we've WAMP tool and it is running.
+Step-2  Create a folder (website) named "stock" into "www" folder.
+Step-3  Create "hello.php" into "stock" folder
+
+hello.php
+---------
+<?php
+ echo date("d-m-Y");
+ echo "This text is generated via PHP Engine.";
+
+Step-4  Create a Java program (code in main method):
+     String urlStr = "http://localhost/stock/hello.php";
+     try {
+         URL url = new URL(urlStr);
+         HttpURLConnection cn = (HttpURLConnection) url.openConnection();
+         try(BufferedReader
+                  reader = new BufferedReader(
+                          new InputStreamReader(
+                              cn.getInputStream()))) {
+                String line = null;
+                StringBuilder sb= new StringBuilder();
+                while( (line = reader.readLine()) !=null) {
+                    sb.append(line);
+                }
+                //Print the output/response
+                System.out.println(sb.toString());
+           }
+        }catch (Exception ex) {
+            System.out.println(ex);;
+        }
+
+NOTE: In Android App, we must have to use IP-address instead of "localhost".
+      To know the IP-address of system -> Open "cmd" + Type "ipconfig"
+
+  e.g http://10.10.2.10/stock/hello.php
+
+Example: PHP database object - PDO library to read/update data from/into database
+
+emp-insert.php
+-------------
+<?php
+  $cn = new PDO("mysql:host=localhost;dbname=yourdb_name","root","");  
+  $st = $cn->prepare("insert into emp (emp_no,emp_name,join_date,salary) values (?,?,?,?)");
+  $st->execute( array(1,"Meena","2017-8-1",5000) );
+  $st->execute( array(2,"Rena","2017-8-1",5000) );
+  $st->execute( array(3,"Reema","2017-8-1",8000) );
+ 
+emp-fetch.php
+-------------
+<?php
+  $cn = new PDO("mysql:host=localhost;dbname=yourdb_name","root","");  
+  $st = $cn->prepare("select * from emp");
+  $st->execute();
+  $rows = $st->fetchall();
+  header("content-type: application/json");
+  echo json_encode( $rows );
+
+
+Example: Send data to the PHP resource and receive them via $_POST array
+
+test.php
+----------
+<?php
+ $no1 = 0 + $_POST["no1"];
+ $no2 = 0 + $_POST["no2"];
+
+ $result = [];
+ $result["add"] = $no1+$no2;
+ $result["sub"] = $no1-$no2;
+ $result["mul"] = $no1*$no2;
+ $result["div"] = $no1/$no2;
+
+ header("content-type: application/json");
+ echo json_encode( $result );
+
+And the Java code (in main):
+
+         String urlStr = "http://localhost:8010/stock/test.php";
+        try {
+            URL url = new URL(urlStr);
+            HttpURLConnection cn = (HttpURLConnection) url.openConnection();
+
+            cn.setDoOutput(true);
+            cn.getOutputStream().write("no1=10&no2=20".getBytes());
+            cn.getOutputStream().flush();
+
+            try(BufferedReader
+                        reader = new BufferedReader
+                    (new InputStreamReader
+                            (cn.getInputStream()))) {
+
+                String line = null;
+                StringBuilder sb= new StringBuilder();
+
+                while( (line = reader.readLine()) !=null) {
+                    sb.append(line);
+                }
+                System.out.println(sb.toString());
+            }
+        }catch (Exception ex) {
+            System.out.println(ex);;
+        }

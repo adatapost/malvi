@@ -1,0 +1,394 @@
+ The Data Interchange Format - JSON and XML
+ ==========================================
+
+ JSON (JavaScript Object Notation) and XML (Extensible Markup Language) are two standard forms of
+ data interchange/exchange format or methods. Note that these two ways are industry standard so
+ different programming envirnment have supported APIs to parse and format the JSON and XML.
+
+ Software modules/tool and APIs that parses and format such data format are called "Parsers" or 
+ "Engines" (e.g XML Parsers.  JSON Parsers)
+
+ JSON
+ ====
+ JavaScript Object Notation is a syntax or format to prepare dataset using JavaScript Language's
+ object syntax.
+
+  Syntax:
+     Single object
+     -------------
+     {
+       "key1": value1,
+       "key2": value2,
+        .....
+      }
+
+       The "key" must be string and enclosed in single or double quotes.
+
+       The value might be number (integer, float), string, date or another JSON single or multiple
+	objects.
+
+Example:
+
+Employee record format
+------------------------
+{
+  "id": 10,
+  "name": {
+      "firstName": "Meena",
+      "lastName": "Shah"
+   },
+   "address": {
+        "area": "Area namne",
+        "city": "Mehsana",
+        "pin": 384001
+    }
+}
+
+     Multiple objects or List - JSON list
+     ---------------------------
+     [item1,item2,.....]
+
+Example: Student records
+[{"roll": 10,"name": "Raj"}, {"roll": 20, "name": "Meena"}];
+
+Example: City names
+["Meh","Pat","Rajkot",...]
+
+
+JSON Parser
+===========
+
+Download the source code from json.org (JSON for Java). There are number of open source libraries because lake of standard JSON API in Java SE. However in Java EE and Android include the JSON for Java in their APIs collection.
+
+1. Copy the source code from github + Extract the zip file
+2. Create a project (Intellij/Netbeans) + Create unique package "in.json" (or any other name) and copy all .java source code file of JSON parser API into "in.json" package folder.
+
+3. There are number of classes but two of them are primary or entry point classes :
+     1. JSONObject   - Parse and Format the single object
+     2. JSONArray    - Parse and format the list
+
+Examples
+---------
+
+1. Java arrays into JSON list
+
+    int []nos = {11,2,33,44,55};
+    JSONArray array=new JSONArray(nos);
+    System.out.println(array.toString());
+
+2. Java POJO to JSONObject
+
+        Product product = new Product(10,"Pencil");
+        JSONObject obj = new JSONObject(product);
+        System.out.println(obj.toString());
+
+3. Construct the JSON object from the scratch
+
+        JSONObject emp = new JSONObject();
+        emp.put("id",19);
+        emp.put("name","Rajesh");
+        emp.put("salary",10000.20);
+        System.out.println(emp.toString());
+
+4. Construct the list of simple item
+
+        JSONArray array1 = new JSONArray();
+        array1.put(10);
+        array1.put(20);
+        array1.put(30);
+        System.out.println(array1);
+
+5. Construct the list of JSONObjects
+        JSONArray array2 = new JSONArray();
+        JSONObject obj = new JSONObject();
+        obj.put("roll",10);
+        obj.put("name","Meena");
+        array2.put( obj );
+
+        obj = new JSONObject();
+        obj.put("roll",20);
+        obj.put("name","Seema");
+        array2.put( obj );
+        System.out.println(array2.toString());
+
+6. JSON string to JSONObject parse
+
+        String jsonStr = "{\"id\": 10, \"name\": \"Meena\"}";
+        JSONObject obj = new JSONObject(jsonStr);
+
+        System.out.println(obj.getInt("id"));
+        System.out.println(obj.getString("name"));
+
+7. JSON string to JSONArray and JSON Object
+
+        String jsonString = "[{\"roll\":10,\"name\":\"Meena\"},{\"roll\":20,\"name\":\"Seema\"}]";
+        JSONArray array = new JSONArray(jsonString);
+        System.out.println(array.length());
+        for(int i=0;i<array.length();i++) {
+            JSONObject o = array.getJSONObject(i);
+            System.out.println(o.getInt("roll") + "   " + o.getString("name"));
+        }
+
+8. ArrayList serialization
+
+        ArrayList<Emp> emps = new ArrayList<>();
+        emps.add(new Emp(1,"Raj",1000));
+        emps.add(new Emp(2,"Man",2000));
+
+        JSONArray array = new JSONArray(emps);
+        System.out.println(array.toString());
+
+XML Parser
+==========
+Mostly, each & every programming platform and language have two standard 
+XML PARSERS or Parser APIs.
+
+   1. DOM API (Document Object Model) 
+   2. SAX API (Simple API for XML)
+
+In JavaSE, we've javax.xml, org.w3c.dom, and org.w3c.xml are the standard
+ packages which represent the DOM, SAX and other non-standard APIs.
+
+The DOM API
+------------
+This API uses Document Object Model interfaces which are located at org.w3c.dom.
+
+The DOM interface load an entire XML document at once and hence it will use huge 
+amount of memory if XML data document is too large/huge. In fact, the DOM
+is suited for small size data document.
+
+There is another API called SAX, is used to read/write large amount of
+XML Data because it uses serial or sequence approach to read/write
+the XML data. 
+For example, SAX uses sequential read technique in which char by char 
+are read and examined.
+
+Important interfaces of DOM
+--------------------
+
+  1. Node - It is the root of all DOM interface. In fact, everything 
+     in an XML document are nodes.
+  2. NodeList - It is the collection of Nodes.
+
+  3. Element - A specialized "Node" (sub -interface of Node) to represent
+               element, text and attribute.
+  4. Attr    - It represent attribute node.
+  5. Document - It represent the root node (main node) of the XML document.
+
+Example: Create XML data document programatically. (Code in main)
+
+       //1. Start or load the DOM Parser and instantiate the document 
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = factory.newDocumentBuilder();
+        Document document = documentBuilder.newDocument();
+
+        //2. Create root and child nodes and text nodes
+        Element emps = document.createElement("emps");
+
+        Element emp = document.createElement("emp");
+        emp.setAttribute("company", "ABC Ltd");
+        Element no = document.createElement("no");
+        Element name = document.createElement("name");
+        Element salary = document.createElement("salary");
+
+        no.appendChild(document.createTextNode("10"));
+        name.appendChild(document.createTextNode("Mr. Rajesh"));
+        salary.appendChild(document.createTextNode("30000"));
+
+        //Adjust the node tree
+        emp.appendChild(no);
+        emp.appendChild(name);
+        emp.appendChild(salary);
+
+        emps.appendChild(emp);
+                          // Create() is a user defined method
+        emps.appendChild( Create(document,"20","Meena","55555","Reliance Ltd"));
+
+        document.appendChild(emps);
+
+        //3. Transform DOM to Stream (file) - Save DOM to disk
+        TransformerFactory tFactory = TransformerFactory.newInstance();
+        Transformer transformer = tFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+        DOMSource source = new DOMSource(document);
+        StreamResult result = new StreamResult(new FileOutputStream("c:/javaprg/emp.xml"));
+        transformer.transform(source, result);
+    ------- End of main() ----
+
+   //Create method in same class
+    public static Element Create(Document document, String mId, 
+                           String mName, String mSalary, String mCompany) {
+        Element emp = document.createElement("emp");
+        emp.setAttribute("company", mCompany);
+        Element no = document.createElement("no");
+        Element name = document.createElement("name");
+        Element salary = document.createElement("salary");
+
+        no.appendChild(document.createTextNode(mId));
+        name.appendChild(document.createTextNode(mName));
+        salary.appendChild(document.createTextNode(mSalary));
+
+        //Adjust the node tree
+        emp.appendChild(no);
+        emp.appendChild(name);
+        emp.appendChild(salary);
+        return emp;
+    }
+
+Example: Read the XML Data document
+
+        //1. Initialize the DOM
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = factory.newDocumentBuilder();
+        Document document = documentBuilder.parse("c:/javaprg/emp.xml");
+
+        //2. Search and list
+
+        NodeList list = document.getElementsByTagName("name");
+        for(int i=0;i<list.getLength();i++) {
+            Element e = (Element) list.item(i);
+            System.out.println(e.getTextContent());
+        }
+
+        list=document.getElementsByTagName("emp");
+        for(int i=0;i<list.getLength();i++) {
+            NodeList nd = list.item(i).getChildNodes();
+            for(int j=0;j<nd.getLength();j++) {
+               if(nd.item(j).getNodeType() == Node.ELEMENT_NODE) {
+
+                   System.out.println( nd.item(j).getTextContent());
+               }//end if
+            }//end for
+        }//end for
+
+Example: Update or delete a node 
+.... as per previous example....
+        Element root = document.getDocumentElement(); // To obtain the root element
+        NodeList list = document.getElementsByTagName("no");
+        Element search = null;
+        String no = "10";
+        for(int i=0;i<list.getLength();i++) {
+            Element e = (Element) list.item(i);
+            if(e.getTextContent().equals(no)) {
+                search  = e;
+                break;
+            }
+        }
+        if(search!=null) {  // if found
+            Node parent = search.getParentNode();
+            //root.removeChild(parent);
+            //Or Update the name value
+            Element e = (Element) parent.getChildNodes().item(3);
+            e.setTextContent("New name");
+            
+            //Transformer code - same as the first example (saving dom to stream)
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+            Transformer transformer = tFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            DOMSource source = new DOMSource(document);
+            StreamResult result = new StreamResult(new FileOutputStream("c:/javaprg/emp.xml"));
+            transformer.transform(source, result);
+        } else {
+            System.out.println("Not found");
+        }
+
+
+SAXParserFactory and SAXParser
+===============================
+
+SAX uses event driven mechanism to read & parse the XML data document. The SAX parser requires
+a sub-class of BaseHandler, which an event handler used by the SAX to raise number of events
+whenever a document being read,  a start element appear, text content in the document arises and also an element closes.
+
+We will use "DefaultHandler", which a sub class of BaseHandler to define an event handler. 
+
+Steps to perform SAX Parsing of XML doc:
+
+Step-1 First of all create a "public" sub class of DefaultHandler and override
+       minimum startElement, endElement and characters event methods.
+
+Step-2 Based upon the XML data document create a POJO. This entity should
+       reflect the data-structure of XML document.
+
+For instance,  <emp company="ABC Ltd">
+                  <no>10</no>
+                  <name>AAAA</name>
+                  <salary>1000</salary>
+                </emp>
+
+            XML node <emp> require following POJO definition:
+
+public class Emp {
+  private String no,
+                 name,
+                 salary,
+                 company;
+  ...
+}
+
+1. MyHandler.java
+
+public class MyHandler extends DefaultHandler {
+    private ArrayList<Emp> list= new ArrayList<>();
+    private String data = null;
+    private Emp emp = null;
+
+    public ArrayList<Emp> getList() { return list; }
+
+    @Override
+    public void startElement(String uri, String localName, String qName,
+                             Attributes attributes) throws SAXException {
+         if(qName.equals("emp")) {
+             emp = new Emp();
+             emp.setCompany(attributes.getValue("company"));
+         }
+    }
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+       if(qName.equals("emp")) {
+           list.add(emp);
+       }
+       if(qName.equals("no")) {
+           emp.setNo( data );
+       }
+        if(qName.equals("name")) {
+            emp.setName( data );
+        }
+        if(qName.equals("salary")) {
+            emp.setSalary( data );
+        }
+    }
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        data = new String(ch,start,length);
+    }
+}//end class
+
+2. Parser code in main method:
+
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser parser = factory.newSAXParser();
+
+        MyHandler handler = new MyHandler();
+
+        parser.parse("c:/javaprg/emp.xml", handler);
+
+        for (Emp e: handler.getList())
+            System.out.println(e);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

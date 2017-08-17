@@ -1,0 +1,96 @@
+Parameterized Types
+
+OR
+
+Generics
+=============================================================================
+
+The "Generic" or "Templated" or "Parameterized" TYPES allow us to pass other "TYPES" just like a method parameter to a method.
+
+So, to pass a "TYPE" to another "TYPE" is known as Generics or Parameterized Types. In this context, the TYPE can be a "class" or "interface".
+
+IMPORTANT **
+
+  The "Type" parameter of the Generic TYPE must be a sub-class of java.lang.Object. It means you can't use 
+  primitive types -- int, short, byte, long, float, double, boolean, and char as TYPE parameters.
+
+  
+Syntax:
+
+access_modifier class YourTypeName<Type1, Type2,....> extends SuperType<Type1,.....>
+                                                      implements SuperInterface1<Type,....> {
+   //
+}
+
+The TYPE parameter name must follows the standard naming convention of parmeter name; ie. The TYPE parameter uses upper alphabet. For instance,
+
+public class Stack<T> {
+    ....
+}
+public class Pair<K,V> {
+
+}
+
+Here, T stands for TYPE; however you can choose your own name or identifier.
+      public class Stack<E> { } // E stands for Element 
+      public class Stack<I> { } // I stands for Item
+
+     K stands for Key and V stands for Value; a pair of Key-Value item
+
+You can use T1,T2,T3,.... TYPE parameters if there are more than one TYPE parameters
+      public class Test<T1,T2,T3> { }
+
+Example:
+package in.abc;
+//Generic class that represent data/value of any datatype
+class Data<T> {
+   private T value;
+   public T getValue() { return value; }
+   public void setValue(T value) { this.value = value; }
+}
+
+//Test methods
+class Test {
+   public static void main(String []args) {
+     // Data<int> no = new Data<int>()    <--- This is invalid because "int" is primitive and hence can't use it
+     Data<Integer> no = new Data<Integer>(); // Valid
+     Data<Double> no1 = new Data<>();        // Valid; No need to specify the type with new keyword
+     Data<String> str = Data<>();
+
+     no.setValue( 10 );
+     no1.setValue( 10.10 );
+     str.setValue( "Hello! Generics" );
+
+     System.out.println(no.getValue() + " " + no1.getValue() + " " + str.getValue() );
+
+     }//End main
+}//End of class 
+
+Description:
+
+    Data<Integer> no = new Data<Integer>(); The compiler will replace TYPE "T" with "Integer" so all T becomes Integer
+    Similarly, the Data<String> means all T will be replaced by "String"
+
+Conculusion
+------------
+What is "Generics"?
+
+     It is a Java compiler's mechanism to re-use the code by setting TYPE parameters. Mostly data-structure algorithm
+     problems are defined using "Generics or templated or parameterized or metaprogramming" paradigm.
+
+Example-1 - code in main
+
+     Data<Integer[]> pp = new Data<>();
+     pp.setValue( new Integer[] { 11,22,33,44 } );
+     for(Integer n : pp.getValue()) {
+       System.out.println(n);
+     }
+
+Example: Create a Stack<T> using an array
+
+public class Stack<T> {
+   private T items[]; private int top = -1;
+   public void push(T item) { }
+   public T pop() { }
+}
+

@@ -1,0 +1,78 @@
+ Nested classes/Types
+ ====================
+
+ Nested TYPES are just like a top-level types except they are created inside the another type. To create a nested
+ type, we must have to use the "static" modifier with its definition.
+
+ Example:
+
+package in.abc;
+
+public class College {
+   private String name;
+
+   //getter/setters
+
+   public static class Student {
+       //fields
+       //constructors, getters/setters
+   }
+
+   public static class Course {
+       //fields
+       .....
+   }
+
+   public static class Teacher {
+       //...
+   
+   }
+}
+
+Note that the nested classes share the package name that is specified in the file.
+
+You can use any of the nested class using following syntax:
+
+    package.subpackage.EnclosingClass.EnclosedClass varName = ......
+
+ e.g  code in main:
+
+  in.abc.College.Course beIt = new in.abc.College.Course("IT","Inf. Technology","4 years");
+
+  College.Student s1 = new College.Student(1,"Name");
+
+  
+Nested classes should be used when we want to create a logocal group of related TYPES (classes). The package system creates a physical group of related TYPES/ classes.
+
+For example,
+
+public class Geometry {
+  public static class Int {
+      public static class Point { }
+      public static class Rect { }
+      public static class Polygon { }
+  }
+  public static class Real {
+      public static class Point { }
+      public static class Rect { }
+      public static class Polygon { }
+  }
+}
+
+//Represent real rect data
+
+ Geometry.Real.Rect r = new Geometry.Real.Rect(10,10,100.33,100.11);
+
+NOTE: Compiled nested classes are saved as "Enclosing$Enclosed....." syntax.
+		Geometry$Int$Point.class
+		Geometry$Real$Point.class
+
+
+
+
+  
+
+
+  
+
+    

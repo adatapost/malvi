@@ -1,0 +1,312 @@
+Class Inheritance
+==================
+
+ Inheritance is a mechnism to create a new class from using the existing class. The newly created class is nothing
+ but an existing class with a new name and it includes all traits of an existing class. The existing class is known
+ as super or base class whereas the newly created class is known as sub or derived class.
+ 
+ There must be one and only one direct super class.
+
+ In Java platform, the class we create or have created without adding inheritance syntax also sub classes of
+ the java.lang.Object class because the Java compiler automatically insert "extends java.lang.Object" if class definition has no extends clause.
+
+  For example,
+
+    public class Student { }  
+      is same as,
+    public class Student extends java.lang.Object {}
+
+  
+ The java.lang.Object is the root or ultimate super class of all Java classes excepts the Eight primitive types and the  type java.lang.Object itself.
+
+ Why the Java platform uses this kind of automatic inheritance?
+
+    The short answer is the implmentation of "Unified" programming model. Everything is "java.lang.Object".
+    Basically inheritance relationship between classes is denoted by the "is" relation. Whereas composition
+    relationship is denoted with "has" relation.
+
+    Example,
+
+       public class Language { }  // Reads as "Language is java.lang.Object"
+       public class English extends Language {} // reads as "English is Language"
+       public class Sankrit extends Language {} //  "Sanskrit is Language"
+       public class Gujarati extends Sankrit {} //  "Gujarati is Sanskrit"
+       public class Kutchi extends Gujarati {}  //   "Kutchi is Gujarati"
+
+    And with composition, 
+       public class Address {}
+       public class Student {
+                 ....
+              private Address local, postal; // Student has two instances of Address
+        }
+
+      The inheritance is tansitive and hence the class English has one direct super class "Language" and one indirect super class "Object".
+
+      Similarly, the class "Kutchi" has four super classes - Gujarati (Direct), Sanskrit, and Language
+
+      The "cast" or "conversion" is the second most property of inheritance. We can store the reference of
+      sub-class object into super class reference variable and also retrieve the object reference accordingly.
+
+      Example: Following example demonstrate how the object cast is performed in Java (or anyother OOP languages)
+
+class A {
+   public int no;   
+}
+class B extends A {
+   public int no;
+}
+
+code in main method:
+
+  When we create an object of "B" class, there will be three objects created and these objects are dipicted in following   figure.
+
+   Object x = new B();
+
+   Implicit cast : To represent reference of an object of sub-class into super class reference variable.
+            Object x = new B();  Or A y = new B();
+
+          OR
+
+            B z = new B();
+            A y = z; // Implicit cast
+            Object x = z; // Implicit case or Object x = y;
+
+
+   Explicit cast:  To obtain the reference of an object of sub-class using the super class reference variable.
+
+             Object x = new B(); // Implicit cast
+             A y = (A) x; // Explicit cast
+             B z = (B) x;   // Explict cast
+             y.no = 10;
+             z.no = 101;
+
+             s.o.p(y.no + " " + z.no);
+             
+             ((A)x).no = 100;
+             ((B)x).no = 500;
+
+   Examine the TYPE of an instance using "instanceof" keyword/operator:
+
+      Syntax:   varName instanceof TypeName 
+
+                The expression returns boolean value (true/false).
+
+        //Object x= new B();
+        Object x = 11.22; // "Hello";
+        System.out.println(x instanceof A);
+        if(x instanceof Number) {
+            System.out.println("It is a number");
+            System.out.println(x instanceof Object);
+            System.out.println(x instanceof Number);
+            System.out.println(x instanceof Integer);
+            System.out.println(x instanceof Double);
+        }
+
+
+   Example: If cast is not specified as per object hierarcy then CastException error will be raised.
+
+        Object x = 11.22; // "Hello";
+        A  y = (A)x;  //Invalid CastException -- No object for the type "A" in Double+Number+Object hierarchy
+
+Constructors in super & sub classes
+===================================
+
+ => Constructors are not inherited.
+
+ => If your class definition has no definitions of constructors then the compiler automatically insert a parameterless
+    constructor and this constructor is called "Default constructor".
+      public class A {} // In this class, we've default constructor
+     But, following classes don't have default constructor
+         public class A { 
+              public A() { }
+         }
+
+        OR 
+         public class A {
+               public A(int n) {}
+         }
+
+     By default, the super's paramerless or default constructor will be selected.
+
+Example:
+
+class A {
+    public A() {
+        System.out.println("A::NoArg");
+    }
+    public A(int n) {
+        System.out.println("A::IntArg");
+    }
+}
+
+class B extends A {
+    public B() {
+        System.out.println("B::NoArg");
+    }
+    public B(int no) {
+        System.out.println("B::IntArg");
+    }
+    public B(String str) {
+        System.out.println("B::StrArg");
+    }
+}
+
+code in main:
+
+ B x = new B();
+ B y = new B(10);
+ B z = new B("Hello");
+
+But, what will happen if the super class "A" has only parameterized constructor? In this case our code wont
+compiled because it need parameterless or default consttructor in the class in order to raise the
+super's constructor.
+
+public class A {
+   public A(int no) {
+     System.out.println("A::IntArg"); 
+   }
+}
+
+To solve this issue, we must use the "super" keyword from within the sub-class constructor and this super() must appear at the very first statement in the constructor.
+
+class B extends A {
+    public B() {
+        super(0);
+        System.out.println("B::NoArg");
+    }
+
+    public B(int no) {
+        super(no);
+        System.out.println("B::IntArg");
+    }
+
+    public B(String str) {
+        super(0);
+        System.out.println("B::StrArg");
+    }
+}
+
+code in main:
+   As per previous example
+
+Example:  Create sub-clases of "Person" class - Doctor, Teacher, Student etc
+
+public class Person {
+   private int age;
+   private String name;
+
+   public Person(String name, int age) {
+       this.age = age;
+       this.name = name;
+   }
+   //and getter/setters
+}
+
+public class Student extends Person {
+    private int standardNo;
+    public Student(String name, int age, int standardNo) {
+        super(name,age);  // pass data to the super's constructor
+        this.standardNo = standardNo;
+    }
+    //getter/setter
+}
+
+public class Teacher extends Person {
+    private String mainSubject;
+    public Teacher(String name, int age, String mainSubject) {
+        super(name,age);  // pass data to the super's constructor
+        this.mainSubject = mainSubject;
+    }
+    //getter/setter
+}
+public class Doctor extends Person {
+     private String speciality;
+     .....
+}
+code in main:
+ 
+   Doctor d = new Doctor("Mr.A",33,"Ortho");
+   Student s = new Student("Mr.T",7,3);
+   Teacher t = new Teacher("Mr.Y",55,"Maths");
+
+   //code to print the data
+
+   s.o.p(d.getName() + " " + d.getAge() + " "+ d.getStandardNo());
+
+ NOTE: Above example demonstrate how to pass data to the super's fields via constructor of the sub classes.
+
+
+ Using the protected fields to allow sub classes to update or read their values.
+ --------------------------------------------------------------------------------
+  The "protected" modifier has same as private access but protected items are also visible in sub classes.
+
+  Update the previous example and add "protected" fields in "Person" class
+
+   public class Person {
+      protected int age;
+      protected String name;
+      ....rest as per previous example 
+   }
+  public class Doctor extends Person {
+      private String speciality;
+      public Doctor(String name, int age, String speciality) {
+         this.speciality = name;
+         super.age = age;     // fields are visible because they are created using "protected"
+         super.name = name; 
+      }
+    ....
+   }
+
+ Method Overriding
+ -----------------
+
+  To re-define super class's non final instance method into the sub-class with same signature and same or higher 
+  access/visibility is known as method overriding or method substitution.
+
+  In fact, method overriding is a technique to remove super class's method definition from the
+  sub-class by creating same named and same signature method.
+
+  Why we need to override the method?
+     
+
+  In some cases we don't need super's implementation or super's implementation is found useless in sub-classes; these are the two points responsible behind the overriding a method.
+
+  The @Override annotation
+  -------------------------
+  What is annotation?
+      
+   The @interface keyword creates an anotation type and this "annotation" type is used
+   to provide metadata of TYPES and TYPE MEMBERS to the underlying framework, compiler and
+   runtime.
+
+    So, @annotations carries "extra" data to the compiler/runtime etc. 
+
+   In current scope, we will use @Override annotation to tell the compiler (or to instruct the
+   compiler) that this is the method which overrides the super's implementation.
+
+
+Example:
+
+class A {
+  public void test() { }
+}
+class B extends A {
+  public void test() { }  // It is valid example of overriding a "test" method
+}
+class C extends A {
+  public void test(int n) { } // It isn't a method overriding - it is an overloading of method
+}
+class D extends A {
+  @Override
+  public void test(String str) { }   // The compiler stops the compilation and throws an error because
+}                                    // there isn't test(String str) match in super class
+
+class E extends A {
+  @Override
+  public void test() { }   //It is valid and is overriden method
+}
+
+
+
+
+

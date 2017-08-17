@@ -1,0 +1,132 @@
+ The java.util.Map<K,V> interface and java.util.HashMap<K,V> class
+ -----------------------------------------------------------------
+
+  In Map<K,V>, the Key-Value pair is known as an "entry" which is exposed by the java.util.Map.Entry<K,V> type.
+
+  The HashMap<K,V> object represent the unique Keys and its associated value. The Keys are always a Set<T> and
+  it is accessed via  "keySet()" method and V-Values are represented by the "values()" of Collection<T> type.
+
+Example: Test the HashMap methods
+
+        HashMap<String,Integer> cities = new HashMap<>();
+
+        //add/replace the entry
+        //put(key,value)
+        cities.put("Mehsana",384001);
+        cities.put("Patan",349932);
+        System.out.println( cities.put("Mehsana",699999));  //Replace Old/replaced value
+        System.out.println( cities.put("Surat",10000));  // Add Old/replaced value
+
+        //Iterate the collection - by key
+        for(String city : cities.keySet()) {
+            System.out.println(city + " : " + cities.get(city));
+        }
+
+        //Delete an entry
+        System.out.println(cities.remove("mehsana")); // null
+        System.out.println(cities.remove("Patan")); // deleted value
+        //Iterate via entryset
+        for(Map.Entry<String,Integer> entry : cities.entrySet()) {
+            System.out.println(entry.getKey() + "  : " +  entry.getValue());
+        }
+
+        //list the values()
+        for(Integer pin : cities.values())
+            System.out.println(pin);
+
+        System.out.println(cities.containsKey("Patan"));
+        System.out.println(cities.containsKey("Surat"));
+        System.out.println(cities.containsValue(699999));  
+
+
+Example: Program to represent Student name and marks of all five subjects or less than 5 subjects.
+
+ HashMap<String,Integer[]> students = new HashMap<>() 
+
+OR
+
+ HashMap<String,ArrayList<Integer>> students = new HashMap<String,ArrayList<Integer>>();
+
+For array values:
+
+   students.put("Meena", new Integer[] { 11,22,33} );
+   students.put("Reena", new Integer[] { 88,87,23,22,33} );
+
+   for(Map.Entry<String,Integer[]> entry : students.entrySet()) {
+      System.out.println(entry.getKey());
+      for(Integer mark : entry.getValue()) {
+           System.out.println("\t" + mark);
+      }
+   }
+
+For List<T> values: 
+
+        HashMap<String,List<Integer>> students = new HashMap<String,List<Integer>>();
+        students.put("Meena", new ArrayList<>());
+        students.put("Reena", new ArrayList<>());
+        students.put("Raj",Arrays.asList(66,77,33));  // Create List<T> from the literals
+
+        students.get("Meena").add(55);
+        students.get("Meena").add(97);
+
+        students.get("Reena").add(45);
+        students.get("Meena").add(95);
+        students.get("Reena").add(55);
+
+        for(Map.Entry<String,List<Integer>> entry : students.entrySet()) {
+            System.out.println(entry.getKey());
+            for(Integer mark : entry.getValue()) {
+                System.out.println("\t" + mark);
+            }
+        }
+
+
+Difference between Arrays.asList(...) and object of ArrayList<T>
+-----------------------------------------------------------------
+Arrays.asList(...) returns a read-only List<T> without add(), and set() and delete() behavior whereas the List<T> of ArrayList<T> is fully operational.
+
+ List<Integer> nos = Arrays.asList(10,20);
+ nos.add(20);  // Error <-- Can't add into read-only object
+
+But we can add/update/delete,
+ List<Integer> nos = new ArrayList<Integer>();
+ nos.add(10);  //OK
+
+Example: Represent the "Country-SetOfStates" collection
+
+Map<String, HashSet<String>> countries = new HashMap<String, HashSet<String>>();
+countries.put("India", new HashSet<>());
+countries.put("US", new HashSet<>());
+countries.get("US").add("Newyork");
+countries.get("India").add("Gujarat");
+...... 
+
+Example: Country-SetOfStates-SetOfCities
+
+Example: PRogram to calculate the occurence of characters of a given string.
+
+ e.g  str = "abbb aa aa";
+  a occurs 4 times
+  b occurs 3 times
+    occurs 2 times
+
+Example: Program to count the occurance of words in a given string
+
+  "The red sun and red rose"
+
+   red occurs 2 times
+   The occurs 1 time
+   ....
+
+Example: We've a Product class with id, name, unit, rate, isAvailable fields. Design a "Products" collection of List<T> which expose the filter methods:
+
+public class Products {
+  private List<Product> products = new ArrayList<>();
+  
+  ....
+  public List<Product> getAvailableProducts() { }
+  public List<Product> getProducts(double rateRange1, double rateRange2) {  }
+  public List<Product> getProductsByName(String name) { } 
+}
+    
+

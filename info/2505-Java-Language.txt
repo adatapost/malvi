@@ -1,0 +1,291 @@
+JavaSE - Language, APIs and Runtime
+====================================
+
+Java Standard Edition (SE) is a base platform that comprises following components:
+  1. Java programming language
+  2. Java Core Application Programming Interface and
+  3. Java Runtime Environment (JRE)
+
+[Note: Platform or framework is the term which is derived from Hollywood's principal "Don't call us, we will call you" and in the programming context it is also refered as "IoC - Inversion of control"]
+
+Types system in Java SE
+=======================
+
+There are two main category of TYPES:
+  1. Eight primitive types - byte, short, int, long, float, double, boolean and char.
+  2. Reference TYPES or Java SE TYPES (classes, interfaces, annotations and enums are example of reference types)
+
+About primitive types
+----------------------
+ 1. These types are not designed using Object oriented paradigm and hence people says that Java language (and also
+		JavaSE) is not pure OOP.
+ 2. Later, in Java SE 2 (Java2), new bunch of classes are added which duplicates the functionalities of "primitive 	types" and these types are known as "wrappers or wrapper to primitive types".
+
+	Primitive type		Wrapper Type
+	byte			java.lang.Byte
+	short			java.lang.Short
+	int			java.lang.Integer
+	long			java.lang.Long
+	float			java.lang.Float
+	double			java.lang.Double
+	boolean			java.lang.Boolean
+	char			java.lang.Char
+    
+  Before Java SE5
+
+   To assign primitive value to an object,
+   int n = 10;
+   Integer n1 = new Integer(n);
+
+   To read object value,
+   Integer n1 = new Integer(100);
+   int k = n1.intValue(); 
+
+ After Java SE5 - auto cast feature was introduced:
+
+     Integer n1 = 10;   // will automatically creates an object e.g new Integer(10)
+    
+  and to read the object value,
+
+     int k = n1;        // will automatically call the n1.intValue()
+ 
+
+  Assigning "primitive value" to a wrapper object is called "auto boxing" and
+  retriving wrapper object value and assign it to primitive variable is called "auto unboxing".
+
+Example:
+
+package test;
+
+public class Sample {
+  public static void main(String []args) {
+     Integer no = 10;  //auto boxing
+     int m = no;       //auto unboxing
+
+     no++;
+     m--;
+     System.out.printf("\n%d  %d",no,m);
+  }
+}
+
+To compile,
+>javac    Sample.java    -d    .
+
+  -d will creates a package folder(s) at . (current directory)
+
+To run,
+>java test.Sample
+
+NOTE - java.lang.Class type and its method are used examine the specific type and it's methods, fields, supertypes and many more. The entire API that is used to examine the type is called "Reflection API".
+  Example demonstrate the use of reflection APIs.
+
+package test;
+
+public class Sample {
+  public static void main(String []args) {
+     Class cls = java.lang.Integer.class; // java.util.ArrayList.class; // java.lang.String.class;  = s.getClass();
+     for(java.lang.reflect.Method m : cls.getMethods()) {
+       System.out.println( m );
+     }
+
+     int no =  Integer.parseInt("FF",16); // Integer.parseInt("1010",2);
+     System.out.println( no );
+     System.out.println( Integer.parseInt("55553") );
+  }
+}
+
+The JRE loads the concern classes(types) when we launch the JVM and our an application. Here we have three ways to load the classes/types:
+  1. Using the new keyword.
+  2. By writing the fully qulified type name and assign its reference to java.lang.Class reference variable
+  3. By invoking the java.lang.Class.forName("fully qualified type name") that also returns an instance of 		java.lang.Class.
+
+1. 
+  Integer no = 10;
+  for(java.lang.reflect.Method m : no.getClass().getMethods()) {
+    System.out.println( m );
+   }
+
+2. Class cls = java.lang.Integer.class 
+   for(java.lang.reflect.Method m : cls.getMethods()) {
+      System.out.println( m );
+    }
+3. Class cls = Class.forName("java.lang.Integer");
+   for(java.lang.reflect.Method m : cls.getMethods()) {
+      System.out.println( m );
+    }
+
+ 3. Literals - Java compiler automatically select appropriate primitive type if value/data is written in a code
+		file as a constant or literal form.
+
+	For instance,  value 10 +40  -40 will be of "int" type.
+		       value 10.10	 will be of "double" type.
+		We can use L or l suffix to create "long" literal and
+		       use F or f suffix to create "float" literal.
+		
+		For booleans, we've two special (reserved word) keywords - true and false.
+
+		Any integer literal will be automatically cast into byte and short if given int literal
+		is less than or equals to the size (range) of target type.
+			e.g  byte b = 10;  // 10 is int literal but will be cast implicit to byte
+			but,
+				byte b = 256; will throws an exception
+
+ Example: Code in main() method
+
+     long no = 100000L * 100000;
+     System.out.println( no );
+     System.out.println(Integer.SIZE + " " + Integer.MAX_VALUE +  "  " + Integer.MIN_VALUE);
+     System.out.println(Long.SIZE + " " + Long.MAX_VALUE +  "  " + Long.MIN_VALUE);
+     System.out.println(Byte.SIZE + " " + Byte.MAX_VALUE +  "  " + Byte.MIN_VALUE);
+
+ Example: byte no = 100;    //OK - 100 is int literal
+          int age = 10;    
+          byte mage = age;  //Error because "age" is a int variable.
+ 
+		
+                Character literal is denoted by single quote.
+
+			ANSI - 'a' '?' '^' '7'
+                        UNICODE (Wide char or National Charset or Universal Text Format) - '\u0000'
+					\u + four-hex-chars
+					
+  Example:  char ch = '\u0912';  //hindi "O"
+            System.out.println(ch);
+
+  Example: Hexadecimal, Octal and Binary integer literal
+           int n1 = 0B1010;   //binary uses 0B prefix
+           int n2 = 0xA;      // hex uses 0x prefix
+           int n3 = 012;      // Octal uses 0 prefix
+
+	   System.out.prinf("\n%d  %d  %d",n1,n2,n3);
+
+About Reference types
+=====================
+
+In order to learn the reference types, we must have to learn or least an idea about the memory architecture of JVM. The memory architecture explains how the memory is allocated and deallocated during program execution.
+
+   Memory architecture 
+   -------------------
+   When we launch the Java program (or you can say launch the JVM), the memory manager service of JVM allocate
+   1 MB memory initially for the following purposes:
+
+            1. To create local variables 
+            2. For method parameters (arguments)
+            3. For method call and
+            4. Return type/value of method
+
+   Note that the 1 MB memory will be allocated once when you lauch the JVM and hence the size of this allocated
+	memory will remains 1 MB forever while your program in running. 
+
+   This 1 MB memory is then used by the JVM for above mentioned purposes as the actions appears in the code.
+
+   main() {
+     int a,b,c;
+     f1(); 
+   }
+   f1() {
+     ...
+     f2();
+   }
+   f2() {
+     ..
+   }
+
+   The memory usage (allocate & deallocate) is designed using stack algortihm and hence this 1 MB memory is known
+   as Stack Frame or "STack" memory. Note that the memory will be allocated or deallocated automatically by the
+   memory manager of JVM.
+
+
+  Now, if we have large amount of data and they are not fit into the STACK FRAME or we don't want to use the STACK
+  FRAME because of its short life then we must have to request the memory manager explicitly using the "new" keyword.
+  
+  The memory allocated via new keyword instruction is known as a "HEAP FRAME" and it might be minimum 1 byte and maximum   2 GB or more (depends upon the memory you have).
+
+  A "Heap" is also known as an "object". An object means collection of allocated bytes (memory). Or partitioned area
+  of the memory is called an "object".
+
+ In Java, reference types always uses the "HEAP". It means any type that is sub class of java.lang.Object will uses
+ the heap.
+
+           
+  About class and object and reference variable
+  ----------------------------------------------
+  class Date {
+     int d,m,y;    //data members or fields
+  }
+
+  A "class" keyword creates a new datatype and which is automatic sub class of java.lang.Object.
+
+  Date a;     // "a" is known as reference variable and the size of "a" variable will be always 4 bytes
+              // for 32 bits architecture and 8 bytes for 64 bits architecture.
+
+  	      // if "a" variable is locally defined then it will uses "STACK FRAME" (inside the function/method body)
+              // and if it is created at field then it will uses "HEAP FRAME".
+
+ a = new Date(); // the new keyword instructs the JVM's memory manager to allocate memory for the 
+                 // instance fields - d,m,y and returns the memory reference of the allocate a heap/object.
+
+ 
+Conside the following example:
+
+package my.app;
+
+class Foo {
+  int no;
+}
+ 
+public class Test {
+  public static void main(String []args) {
+     Foo a = new Foo();
+     Foo b = a;
+
+     a.no = 10;
+     b.no = 20;
+ 
+     System.out.println(a.no +  "  " + b.no);     
+ } 
+}
+
+Output:
+
+20 20
+
+Method parameters and called by value way to pass the actual value to them (formal parameters)
+=====================================
+In Java, methods are called or invoked via "CALLED or PASSED" by value only. 
+THERE is no such way to pass by "address" or "reference" mechanism (as available in C,C++,C#,VB.NET etc).
+
+We can pass value of primitive types or reference types to the method and also we may returns these values. 
+
+
+Example:
+
+package my.app;
+
+class Foo {
+  int no;
+}
+ 
+public class Test {
+  public static void testMethod1(int no) {
+    no = 100;
+  }
+  public static void testMethod2(Foo foo) {
+    foo.no = 100;
+  }
+  public static void main(String []args) {
+     int no,a;
+     Foo b = new Foo();
+     no = 1;
+     a = 2;
+     b.no = 3;
+
+     Test.testMethod1( no );
+     Test.testMethod1( a );
+     Test.testMethod2( b );
+   
+     System.out.println(no + "   " + a + " " + b.no);    // 100   100   100
+ }                                                        
+}
+
+CALLED By value : Value being passed or copied to the method parameters when the method is called.

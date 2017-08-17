@@ -1,0 +1,179 @@
+Arrays
+======
+
+Arrays in java are objects of java.lang.Object.
+
+Syntax:
+
+type  []var;  in this syntax all variables after the "type[]" are array type.
+
+	For instance,
+		int []a,b,c;     Here, we've three array reference variables
+
+type var[];  in this syntax only the variable mentioned with subscript [] is a array reference variable.
+	
+	For instance,
+		int a[],b,c;     Here, "a" is array reference variable and "b" and "c" are integer variables
+
+code in main method:
+----
+
+ int []a,b,c;
+ int p[],q,r;
+
+  a = new int[2];
+  b = new int[6];
+  c = new int[9];
+
+  p = new int[6];
+  q = 10;
+  r = 30;
+
+  System.out.println(a + " " + b + " " + c );
+  System.out.println(p + " " + q + " " + r );
+	
+
+Array traversal methods
+-----------------------
+
+1. Via simple loop and index
+
+int []nos = { 10,20,30,40};
+for(int i=0;i<nos.length;i++) {
+  System.out.println(nos[i]);
+}
+
+2. Via "iterator" - for in (for each) loop
+int []nos = { 10,20,30,40};
+for(int no: nos) {
+  System.out.println(no);
+}
+
+
+Array elements and initialization
+---------------------------------
+Array of "primitive" types (Eight primitive types) always initialize with default value of primitive type. 
+ for instance,  int []ar = new int[10] - all 10 element will be initialized with 0
+               float []ar = new float[4]; all 4 float will be initialized with 0.0f
+            boolean []ar = new boolean[10]; all 10 boolean elements are initialized with false
+
+But, the array of reference type automatically initialized with null.
+ For instance,
+             Student []students = new Student[6];  // all six student reference variable contains null
+              Point []points = new Point[5];       // all five point reference value is null
+ 
+Example:
+
+package in.abc;
+
+class Point { // As per previous defition 
+   private int x,y;
+   public Point() {}
+   public Point(int x,int y) { this.x=x; this.y=y;}
+   public int getX() { return x; }
+   public int getY() { return y; }
+}
+
+class PointTest {
+  public static void main(String []args) {
+    Point []points = new Point[5];   // will creates five reference variables
+    for(Point point: points) {
+        System.out.println(point);
+    }
+
+    //create objects
+    points[0] = new Point(10,20);
+    points[2] = new Point(5,6);
+
+    System.out.println("------------");
+    for(Point point: points) {
+        System.out.println(point);
+    }
+
+   System.out.println("------------");
+    for(Point point: points) {
+        if(point!=null) {
+           System.out.println(point.getX()  + " " + point.getY());
+        }
+    }
+  }
+}
+
+Example: Create a "Polygon" class which represents "objects of Point" class.
+
+public class Polygon {
+  private Point []points;
+  
+  //We will use parameterized constructor to restrict the use of the "Polygon"
+  public Polygon(int numPoints) {
+     //creates an array
+     points = new Point[ numPoints ];
+     //create objects of Point 
+     for(int i=0;i<numPoints;i++) {
+       points[i] = new Point();
+     }
+  }
+
+  //getter/setters
+  public Point[] getPoints() { return points; }
+  public void setPoints(Point []points) { this.points = points; }
+
+  //extra helper method
+  public Point getPoint(int index) { return points[index]; }
+  public void setPoint(int index, Point point) { points[index] = point; }
+}//End of class 
+
+
+code in main() method:
+
+   //  Polygon poly = new Polygon(); // Error <--- because match constructor not found
+
+    Polygon poly = new Polygon(4);
+
+   poly.getPoint(0).setX(10);
+   poly.getPoint(0).setY(10);
+
+   poly.getPoint(1).setX(50);
+   poly.getPoint(1).setY(60);
+
+   poly.getPoint(2).setX(90);
+   poly.getPoint(2).setY(50);
+
+   poly.getPoint(3).setX(310);
+   poly.getPoint(3).setY(210);
+
+   for(Point point: poly.getPoints()) {
+     System.out.println( point.getX() + " " + point.getY() );
+
+
+Example: Define classes to represent the two-dimensional data. We will use the HTML's <table> and its children for reference.
+
+<table>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+ <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  ....
+</table>
+
+class Column {
+   private String data;
+}
+class Row {
+   private Column []columns;
+}
+class Table {
+   private Row []rows;
+}
+
+Table tab = new Table(3,3);
+ 
+
+   
+   

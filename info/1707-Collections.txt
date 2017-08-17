@@ -1,0 +1,215 @@
+ The collection framework - java.util classes, interfaces
+ =========================================================
+
+ "Collection" is a set of objects. There is a simplest form of collection and we know it as an array. Array
+ collection is of fixed length (we can't increase or decrease size once it is created).
+
+ In Java Core API, we've bunch of interfaces that design the collection framework for varying purposes:
+
+    1. java.lang.Iterable<T>  -- Any collection interface must be sub-interface of this interface. 
+    2. java.util.Iterator<T>  -- The Iterable<T> interface has a method named "iterator()" which
+                                 returns "Iterator<T> iterator()". This interface has three methods namely
+				 bool hasNext(), T next(), void remove()
+
+           So, at least, the Iterable<T> is an identity of collection and if we want to our own class under the
+		collection framework, we must have very same design.
+
+Example:
+
+[Note: This example explains how to create a collection type and how the "for" in/each loop works]
+
+class MyCollection implements Iterable<Integer> {
+    @Override
+    public Iterator<Integer> iterator() {
+        return new MyData();
+    }
+
+    // Inner class
+    private class MyData implements Iterator<Integer> {
+        private Integer nos[] = {11,2,33,44,5,33};
+        private int index = -1;
+        @Override
+        public boolean hasNext() {
+            if(index<nos.length-1) return  true;
+            return false;
+        }
+
+        @Override
+        public Integer next() {
+            index++;
+            return nos[index];
+        }
+
+        @Override
+        public void remove() {
+
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyCollection coll  = new MyCollection();
+        //1. Travese the list
+        for(int no : coll) {
+            System.out.println(no);
+        }
+
+        //2. Traverse the list (alternative)
+        Iterator<Integer> i = coll.iterator();
+        while(i.hasNext()) {
+            System.out.println(i.next());
+        }
+
+        //OR
+
+        for(Iterator<Integer> t = coll.iterator(); t.hasNext();) {
+            System.out.println(t.next());
+        }
+    }
+}
+
+  As we can see that it is difficult to create our own collection class. There is another interface
+
+     2. java.util.Collection<T> - this interface has additional methods like add(), remove(), search methods and
+				  many more.
+
+     3. java.util.List<T> and 
+     4. java.util.Set<T> are two sub-interfaces of java.util.Collection<T>
+ 
+             The only difference between these two types is :
+                   List<T> allows duplicate elements but in a given order/sequence whereas the Set<T> allows only
+                   unique elements without any sequence (sequence of object is not defined by the Set).
+
+             There are number of abstract and concrete classes designed using List<T> and Set<T>. Basically classes
+		uses "List" suffix are List<T> family members and Set<T> are the members of Set<T>.
+
+		e.g LinkedList, ArrayList, HashSet, TreeSet etc
+     5. java.util.Map<K,V> interface is a composition of Set<T> and Collection<T> -- Key-Value pair where Key must be
+				unique whereas Value can be any kind of Collection<T>.
+
+              Any class found with "Map" suffix are the members of Map<K,V> family.
+
+    NOTE: Set<T> types always uses equals() and hashCode() to compare the object's equality to determine whether an
+		object is already exists or not in the Set<T>.
+
+          Map<K,V>, similarly the Map's K (Key) type must have override the equals() and hashCode because the Key must
+		be unique and not null.
+
+
+The ArrayList<T> class
+=======================
+
+        ArrayList<Integer> ints = new ArrayList<>();
+        // append
+        ints.add(10);
+        ints.add(20);
+
+        //Insert at index
+        ints.add(0,100);
+
+        //iterate
+        for(int no : ints) {
+            System.out.println(no);
+        }
+
+        //get an element at index
+        System.out.println(ints.get(0) +  " " + ints.get(2));
+
+        //Update the element
+        ints.set(0,909);
+
+        //search
+        System.out.println(ints.contains(90)); // false
+        System.out.println(ints.indexOf(20));   // 2
+        System.out.println(ints.lastIndexOf(100)); // -1
+
+
+        //remove
+        ints.remove(0);                 // Remove at index remove(int idex)
+        ints.remove(new Integer(20));  // will remove object  remove(T object)
+
+        for (int n : ints)
+            System.out.println(n);
+
+
+Example: Create a List<Product>
+
+code in main: (We've a Product with equals and hashCode)
+
+ArrayList<Product> products = new ArrayList<>();
+
+products.add( new Product(10,"Pen") );  // id:10 name:"Pen"
+products.add( new Product(20,"Pencil") );
+products.add( new Product(20,"Pencil") );  //Duplicate allowed
+
+for(Product p : products) 
+  s.o.p(p);
+
+//Insert a new product at 0 index
+products.add(0, new Product(3,"Mouse") );
+
+//Search a product whose id = 10 and name = "Pen"
+Product search = Product(10,"Pen");
+if( products.contains( search ) ) 
+   s.o.p("Found");
+else
+   s.o.p("Not found");
+
+
+The java.util.HashSet<T> - Unique objects
+==========================================
+       HashSet<Integer> ints = new HashSet<>();
+        // append
+        ints.add(10);
+        ints.add(20);
+        ints.add(20);   //Duplicate -- won't be added
+
+        //iterate
+        for(int no : ints) {
+            System.out.println(no);
+        }
+        //search
+        System.out.println(ints.contains(90)); // false
+
+        ints.remove(new Integer(20));
+
+        for (int n : ints)
+            System.out.println(n);
+   
+Example: A "Graph" class represent unique "Node(a point object)".
+
+public class Graph {
+   private HashSet<Node> nodes = new HashSet<>();
+
+   public HashSet<Node> getNodes() { return nodes; }
+
+   //Inner class
+ 
+   public class Node {
+        private int x,y;
+        public Node(int x, int y) {
+              this.x = x;
+              this.y = y;
+              nodes.add( this );
+        }
+        public int hashCode() { return x + y; }
+        public boolean equals(Object obj) {
+             return hashCode() == obj.hashCode();
+        }
+        public String toString() { return x+ " " + y; }
+    }
+}
+
+code in main:
+
+ Graph g = new Graph();
+
+ g.new Node(10,20);
+ g.new Node(20,30);
+ g.new Node(10,20);
+ g.new Node(4,5);
+ 
+ for(Graph.Node n : g.getNodes()) {
+   s.o.p(n);
+  }

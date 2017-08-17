@@ -1,0 +1,348 @@
+ Inner classes
+ =============
+
+ Inner classes are created inside the another TYPE or method body without adding "static" modifier. If static modifier
+ is used then this definition will be a "nested type".
+
+
+ Syntax:
+
+   class Enclosing {
+
+       class Enclosed1  { }
+
+       class Enclosed2  { 
+            ...
+            class Enclosed3 { }
+       }
+   }
+
+
+ The Inner classes are member of Enclosing classes so you must have to instantiate the "Enclosing" or Outer class first and from the object reference of the Enclosing class we can instantiate the inner classes.
+
+  There are two types of inner classes:
+
+         1. Named inner classes and
+         2. Unnamed/Anonymous or local inner classes
+
+
+  Named inner classes
+  =====================
+
+  Syntax to create the objects of Enclosing and Enclosed classes.
+
+     class Enclosing {
+           //members of Enclosing classes
+
+           class Enclosed {
+               //members of Enclosed classes
+           }
+     }
+
+
+    The "Enclosed" class can access (have visibility) of all members -- whether public, private, protected or package
+    level access of the "Enclosing" class.
+
+    //1 . First of create an object of Enclosing class
+
+           Enclosing enc = new Enclosing();
+
+    //2.  Create an object of Enclosed 
+
+           Enclosing.Enclosed  var1 =  enc.new Enclosed();  <----- Only the name of Enclosed class appears after
+                                        ^                           "enc.new"
+                                        |
+                                     Object reference of Enclosing object
+   
+Example: An app that represent School, class and student data.
+
+class School {
+    private int count;  //Count of students in the school
+
+    public int getCount() {
+        return count;
+    }
+
+    //Inner class
+    public class ClassRoom {
+        private String className; 
+        private int classCount;     //Count of students per classroom
+
+        public ClassRoom(String className) {
+            this.className = className;
+        }
+
+        public String getClassName() {
+            return className;
+        }
+
+        public int getClassCount() {
+            return classCount;
+        }
+
+
+        //Inner class
+        public class Student {
+            private int roll;
+            private String name;
+            public Student(int roll, String name) {
+                this.roll = roll;
+                this.name = name;
+                count++;
+                classCount++;
+            }
+
+            public int getRoll() {
+                return roll;
+            }
+
+            public void setRoll(int roll) {
+                this.roll = roll;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+        }
+    }
+
+}
+
+public class Main {
+    public static void main(String[] args) {
+        School school = new School();
+        System.out.println(school.getCount());
+
+        School.ClassRoom first = school.new ClassRoom("1st Standard");
+        School.ClassRoom second = school.new ClassRoom("2nd Standard");
+
+        School.ClassRoom.Student s1 = first.new Student(1,"A");
+        School.ClassRoom.Student s2 = first.new Student(2,"B");
+        School.ClassRoom.Student s3 = second.new Student(1,"Aa");
+        second.new Student(1,"Aa");
+        second.new Student(1,"Aa");
+        second.new Student(1,"Aa");
+        System.out.println("Total Stuents : " + school.getCount());
+        System.out.println(first.getClassCount());
+        System.out.println(second.getClassCount());
+    }
+}
+ 
+ City side self-employment charter and empowerment 
+
+ Freelance, self-employeement and empowerment charter/services 
+
+ Human resources and self-employee registration, regulation, management and activity controlling system
+ Harsh  
+ 
+
+ Anonymous or local inner class
+ ==============================
+
+  Anonymous classes don't have fields and extra methods except they extends superclass or implements an interface.
+
+    General Syntax:
+
+      For a sub class:
+
+           ClassName varName = new ClassName() {
+              //Override the methods here...
+           };
+
+      For an implementing of an interface
+
+          InterfaceName varName = new InerfaceName() {
+               //Impl. methods of interface
+          };
+
+     
+    If "classname" is used with the above syntax, the Java compiler will extends that class to create anonymous
+    class and if the "interface" is used then the Java compiler implements the interface.
+
+Example:
+
+    Object hi = new Object() {
+       @Override public String toString() {
+           return "Hi! I'm an object";
+       }
+     };
+
+    System.out.println(hi);
+
+ 
+Example : Instantiate the abstract class using anonymous inner syntax
+
+abstract class Help {}
+
+code in main:
+
+   Help p = new Help(); // We can't create an object of Abstract class because it is not completed yet
+
+   //But we can extend the Help and then create the object of its sub classes
+
+   Help m = new Help() {
+   };
+   Help about = new Help() {
+     @Override public String toString() { return "I'm Mr.A"; } 
+   };
+
+
+Closure in Java
+================
+
+What is closure? It is an object that persists the instance methods along with method parameters. Basically, we need to create anonymous or local inner class in order to define the closure.
+
+Example : This example demonstrate the syntax of closure
+
+interface Action {
+   int square();
+   int cube();
+}
+
+class Test {
+
+   //A method that returns anonymous object of Action
+
+   public static Action getAction(int value) {  // Note : parameters of this method if used within the 
+                                                //        anonymous/inner class then converted into final/constant
+						//        and will be persisted into the "Heap"
+       return new Action() {
+          @Override public int square() { return value*value ; }
+          @Override public int cube() { return value*value*value ; }
+       };
+
+   } //End method
+}//End class
+ 
+class Main {
+  public static void main(String []args) {
+      Action action = Test.getAction(10);   // Value 10 will be persisted into memory even after the execution of
+						// this method.
+      System.out.println(action.square() + " " + action.cube());
+  }
+}
+
+
+Example: An object of "Data". Change the value of this object by calling incr() or decr() method.
+
+class Data {
+    int no;
+    public Data(int no) { this.no = no;}
+}
+interface Action {
+    int incr();
+    int decr();
+}
+class Test {
+    public static Action getAction(Data value) {
+        return new Action() {
+            @Override
+            public int incr() {
+                value.no++;
+                return value.no;
+            }
+            @Override
+            public int decr() {
+                value.no--;
+                return value.no;
+            }
+        };
+    } // End of action
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Action action = Test.getAction(new Data(10));
+        System.out.println(action.incr());
+        System.out.println(action.incr());
+        System.out.println(action.incr());
+        System.out.println(action.decr());
+        System.out.println(action.decr());
+        System.out.println(action.decr());
+    }
+}
+
+
+Closure in JavaScript
+=======================
+
+<!doctype html>
+<html>
+  <body>
+     <h1>Example of JavaScript Closure</h1>
+     <a href="#" id="incr">A+</a>
+     <a href="#" id="decr">A-</a>
+     
+     <script>
+        function myClosure(size) {
+            document.body.style.fontSize =  size + "em";
+            return {
+                incr: function() {
+                   size = size + 0.1;
+                   document.body.style.fontSize =  size + "em";
+                },
+                decr: function() {
+                   size = size - 0.1;
+                   document.body.style.fontSize =  size + "em";
+                }
+            };
+        }
+       //Call a function and create the closure.
+       var action = myClosure(1);
+       document.getElementById("incr").onclick = action.incr;
+       document.getElementById("decr").onclick = action.decr;
+     </script>
+  </body>
+</html>
+
+
+
+
+Example:
+
+interface Action {
+   int square();
+   int cube();
+}
+
+class Test {
+
+   //A method that returns anonymous object of Action
+
+   public static Action getAction(int value) { 
+	    Help p = new Help(value); 
+            return p;
+
+   } //End method
+
+ public static Action getAction(int value) {  // Note : parameters of this method if used within the 
+                                                //        anonymous/inner class then converted into final/constant
+						//        and will be persisted into the "Heap"
+       return new Action() {
+          @Override public int square() { return value*value ; }
+          @Override public int cube() { return value*value*value ; }
+       };
+
+   } //End method
+}//End class
+ 
+class Main {
+  public static void main(String []args) {
+      Action action = Test.getAction(10);   // Value 10 will be persisted into memory even after the execution of
+						// this method.
+      System.out.println(action.square() + " " + action.cube());
+  }
+}
+
+class Help implements Action {
+   private    int value;
+   public Help(int value) {
+      this.value = value;
+   }
+   public int square() { return value*value; }
+   public int cube() { return value*value*value; }
+}

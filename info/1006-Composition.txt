@@ -1,0 +1,250 @@
+Example : Geneology app; represent the family tree
+
+public class Person {
+  private String name;
+  private Person father;
+  private Person mother;
+}
+
+Hint:
+
+ Person gf = new Person("Grand Father", null, null);
+ Person gm = new Person("Grand Mother", null, null);
+
+  Person s1 = new Person("First child", gf, gm);
+  Person s2 = new Person("Second child", gf, gm);
+ 
+    Person ss1 = new Person("Spouse of First child", null, null);
+    Person ss2 = new Person("Spouse of second child", null, null);
+
+    Person sss1 = new Person("Child1", s1, ss1);
+    Person sss2 = new Person("Child2", s1, ss1);
+    Person sss3 = new Person("Child3", s2, ss2);
+   
+
+ System.out.println(sss1.getName() + " " + sss1.getFather().getName() 
+                                   + " " + sss1.getFather().getFather().getName());
+
+
+Example: Define "Dept", "Emp", and "Salary" types
+
+public class Dept {
+  private String name;
+  private String location;
+}
+
+public class Emp {
+  private int id;
+  private String name;
+  private Dept dept;
+}
+
+public class Salary { 
+   private int month, year, salary;
+   private Emp emp;
+}
+
+Dept hr = new Dept("Hr","Mumbai");
+Dept prd = new Dept("Production","Mehsana");
+
+Emp e1 = new Emp(1,"Reena", hr);
+Emp e2 = new Emp(2,"Reema", prd);
+Emp e3 = new Emp(3,"Ram", hr);
+
+Salary s1 = new Salary(1,2017,3400,e1);
+Salary s2 = new Salary(2,2017,3450,e1);
+Salary s3 = new Salary(3,2017,3490,e1);
+
+
+Example: Linked list of "Student"
+
+Student.java
+============
+package in.abc;
+
+public class Student {
+  private int roll;
+  private Student link;
+
+  //Getters/setters
+  public int getRoll() { return roll; }
+  public void setRoll(int roll) { this.roll = roll; }
+
+  public Student getLink() { return link; }
+  public void setLink(Student link) { this.link = link; }
+
+  //Constructor
+  public Student(int roll) {
+    this.roll = roll;
+  }
+  public Student() { }
+
+}
+StudentList.java
+=================
+package in.abc;
+
+public class StudentList {
+   private Student first,last;  // "first" represent reference of first object of the linked list and 
+                                // "last" points the last object ref.
+
+   //Add an object at the end of list -- append an object
+   public void add(Student student) {
+      if(first == null) {
+         first = last = student;  //set first object link
+      } else {
+         last.setLink(student);
+         last = student;           //update last object ref.
+      }
+   }
+  //Print the nodes (students)
+  public void traverse() {
+     Student temp = first;
+     while( temp!= null) {
+        System.out.println( temp.getRoll() + " " + temp.getLink());
+        temp = temp.getLink();
+     }
+  }
+}
+
+StudentTest.java   code in main() method
+=================
+   StudentList list = new StudentList(); 
+   list.add( new Student(10) );
+   list.add( new Student(20) );
+   list.add( new Student(30) );
+   list.add( new Student(40) );
+
+   list.traverse();
+
+
+Example: Add "addFirst(Student student)" method into StudentList which adds a new object at begin of the list.
+
+...
+...
+list.addFirst( new Student(400) );
+list.addFirst( new Student(555) );
+
+list.traverse();
+
+Output:
+555
+400
+10
+20
+30
+40
+
+Example: add "delete(int roll)" method into StudentList to release that object if it is exists.
+
+
+Example: Add following methods into "StudentList" class
+
+package in.abc;
+
+public class StudentList {
+   private Student first,last;
+
+   public void add(Student student) {
+      if(first == null) {
+         first = last = student;
+      } else {
+         last.setLink(student);
+         last = student;
+      }
+   }
+  public void traverse() {
+     Student temp = first;
+     while( temp!= null) {
+        System.out.println( temp.getRoll() + " " + temp.getLink());
+        temp = temp.getLink();
+     }
+  }
+
+  public void addFirst( Student student ) {
+     student.setLink( first );
+     first = student;
+  }
+
+  
+  //Delete nodes
+  public void deleteLast() {
+    Student temp = first;
+    //examine whether it is single node or not
+    if( first.getLink() ==null) {
+      first = last = null;
+    }
+
+    while( temp.getLink().getLink() != null) {
+       temp  = temp.getLink();
+    }
+    temp.setLink( null ); //Delete the last node
+    last = temp;          //update last reference
+  }
+
+  public void deleteFirst() {
+     if(first == null) return;
+     first = first.getLink();
+  }
+}
+
+public class StudentTest { 
+  public static void main(String []args) {
+     StudentList list = new StudentList();
+ 
+      //adding nodes at the end of list
+      list.add( new Student(11) );
+      list.add( new Student(12) );
+      System.out.println("Print...");
+      list.traverse();
+
+      //adding nodes at begin of the list
+      list.addFirst( new Student(10) );
+      list.addFirst( new Student(20) );
+      System.out.println("Print...");
+      list.traverse();
+
+      //delete last node
+      list.deleteLast();
+      //delete first node
+      list.deleteFirst();
+      System.out.println("Print...");
+      list.traverse();
+  }
+}
+
+Example: add search method into "StudentList"
+
+public Student findByRoll( int roll ) {
+     Student temp = first;
+     while( temp != null) {
+       if(temp.getRoll() == roll ){
+          return temp;
+       }
+       temp = temp.getLink();
+     }
+    return null;
+  }
+
+and the code to test it (in main()):
+
+   StudentList list = new StudentList();
+   list.add( new Student(10) );
+   list.add( new Student(20) );
+   list.add( new Student(30) );
+   Student s = list.findByRoll( 30 );
+   if( s!=null ) {
+     System.out.println("Record found : " + s.getRoll());
+   } else {
+       System.out.println("Not found.");
+   }  
+
+
+Example: add "deleteByRoll( int roll )" which search the node on given roll and delete it if exists. On success returns true, returns false otherwise.
+
+  Prototype:
+
+ public boolean deleteByRoll( int roll ) {
+    //TODO
+ }
+

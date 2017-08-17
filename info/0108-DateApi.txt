@@ -1,0 +1,168 @@
+ Java Date & Time APIs
+ ---------------------
+
+ We will use java.util.Date, java.util.Calendar and date parse/format class from  java.text.SimpleDateFormat class.
+
+Example: Obtain system's current date & time 
+
+ //Method-1
+ Date now = new Date();
+ System.out.println( now );
+
+ //Method-2 Obtain millseconds
+
+ System.out.println( System.currentTimeMillis() );
+
+Example: Print epoch date time. The Java's Date APIs uses unix style zero date time which uses 1st Jan 1970
+
+Date dt = new Date(0);  // setting 0 millis
+System.out.println(dt);
+
+Example: Add 2 hours, 3 minutes to the current date time.
+
+long millis = System.currentTimeMillis() + ( (2 * 3600* 1000) + ( 3 * 60 * 1000) )
+Date dt = new Date(millis);
+System.out.println(dt);
+
+
+Example: Convert DateTime to String using "java.text.SimpleDateFormat" class
+ 
+The "SimpleDateFormat" uses following pattern characters to format the date & time parts of Date object.
+ (Use Java Documentation to learn more patterns)
+
+  D - day number of year
+  d - day of month 
+  M - month number
+  MMM - Month abbr.
+  MMMM - Month full name
+  E   - Day name abbr
+  EE  - Day full name
+  y   - Year
+  yyyy - year four digit
+  HH  - 24 hour
+  hh  - 12 hour
+  mm - minute
+  ss - second
+  a - am/pm
+
+Example:
+ 
+  Date now = new Date();
+  SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss a");
+  String strDate = sdf.format( now );
+  System.out.println( strDate );
+
+  sdf = new SimpleDateFormat("E, dd-MMMM, yyyy");
+  System.out.println( sdf.format( now ) );
+
+
+Example: Parse the "string date" into Date object
+
+ String strDate = "31-12-2017";
+
+ String pattern = "dd-MM-yyyy";
+
+ SimpleDateFormat sdf = new SimpleDateFormat( pattern );
+
+ // Use sdf.parse() method but this method report the exception so,
+ try {
+    Date dt = sdf.parse( strDate );
+    System.out.println(dt);
+ }catch(Exception ex) {
+    System.out.println(ex);
+ }
+
+Example: Compare date objects using methods of Date class - before() and after()
+
+
+ Date dt1 = new Date(100000);
+ Date dt2 = new Date(100005);
+
+ if(dt1.after(dt2)) 
+   //after
+ else
+   //before
+
+
+Note: We can use equals() to check the equality or inequality of Date objects.
+
+
+Example: Obtain milliseconds from Date object using getTime() method
+
+ Date dt = new Date(); 
+ System.out.println( dt.getTime() );
+
+Example: Construct date & time via milliseconds
+
+ long millis = 20000000L;
+ Date dt = new Date(millis);
+ System.out.println(dt);
+
+Example: java.util.Calendar class and its methods
+
+The java.util.Date has number of deprecated (outdated) methods because it has issues regarding to TimeZone and Culture (Locale). Basically The "Date" class represent Date in current timezone only.
+
+The Calendar is somewhat enhanced version of Date which uses "TimeZone" and "Locale" objects to 
+prepare date & time object.
+
+
+Example: List the available timezones via java.util.TimeZone class
+
+for(String id: TimeZone.getAvailableIDs())
+      System.out.println(id);
+
+
+Example: Create Calendar object with default timezone
+
+ Calendar cal1 = Calendar.getInstance(); 
+ System.out.println( cal1 ) ; // toString() which print parts of Date time object
+ 
+ System.out.println( cal1.get( Calendar.DATE) );  // print day of the month part
+System.out.println( cal1.get( Calendar.MONTH) );  // print month number which is based 0
+						  // 0 means Jan, 1 means Feb etc
+
+ The get( part ) and set( part, value ) methods of the Calendar
+ object read the date & time part and also update/set a part
+ respectively.
+
+Example: Obtain the Date object from Calendar's getTime() method
+
+Calendar cal1 = Calendar.getInstance();
+cal1.set( Calendar.DAY_OF_YEAR, 365);  //Change day of year
+Date dt = cal1.getTime();
+System.out.println( dt );
+
+ 
+Example: Create Calendar instance by setting TimeZone
+
+        TimeZone zone = TimeZone.getTimeZone("America/Regina");
+        Calendar cal1 = Calendar.getInstance(zone);
+        System.out.println( cal1.get( Calendar.HOUR_OF_DAY) ) ;
+        System.out.println( cal1.get( Calendar.MINUTE) ) ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

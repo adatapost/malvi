@@ -1,0 +1,95 @@
+Thread - Java Concurrency
+=========================
+
+What is a "thread"?
+
+   A thread is a control of thread or flow or execution. It is a mechanism controlled by the JVM which
+   divide CPU's attention between two or more methods (functions). It is important to note that we don't
+   have any control or authority to have fully control "Thread system".
+
+   We can try to define, execute and stop/resume threaded action via Java's API - java.lang.Thread    class.
+
+What is the application of thread?
+
+   To make an application more responsive is the prime job of thread. We can use the "thread" while
+   reading content from network or database, animation, performing some background tasks -- backup,
+   printing, writing data, downloading etc.
+
+
+The "Process" term is not related to the term "Thread". A "Process" means a program whereas a thread is a function/method which will be started upon the "process". When we launch the "Java program", we can say, "we've created a process". e.g >java in.abc.Test   ---- A "process" will be created
+In fact, each Java program is an example of "Thread" where an entry point method main() is defined and this thread is called "main" thread.
+
+We will uses the thread to perform various tasks without blocking each other tasks.
+
+How to design the thread?
+-------------------------
+In Java SE, we've very low level class named java.lang.Thread and java.lang.Runnable interface. Different platforms like Java EE, ME, Fx and Android uses extension of "java.lang.Thread" class. (You must have to use AsyncTask class in Android instead of Thread because it represent thread tasks very easily in constrast to the Thread class).
+
+Steps to define, create and execute the threads
+-----------------------------------------------
+
+1. Define the thread
+
+   You can define a thread by creating sub-class of "Thread" 
+
+     OR
+   
+    Implementation of "Runnable" and use the "Runnable" object with "Thread" class.
+
+2. Creating objects of "Thread" are called "Creating the threads".
+
+//define a thread
+class Sample extends Thread {
+  @Override public void run() {
+    System.out.println("A " + System.currentTimeMillis());
+    System.out.println("B " + System.currentTimeMillis());
+    System.out.println("C " + System.currentTimeMillis());
+  }
+}
+
+The "public void run()" method allows user to insert code into the Thread definition. i.e we must      override it.
+
+//creating the threads (code in main)
+
+  //Three threads
+  Sample a = new Sample();
+  Sample b = new Sample();
+  Sample c = new Sample();
+
+3. Executing threads - call the "Thread's start()" method
+
+   a.start();
+   b.start();
+   c.start();
+
+NOTE: In above example, we've four threads - main() and three objects of Thread in current program.
+
+
+Example: Create Runnable object
+
+class Sample implements Runnable {
+  @Override public  void run() {
+    System.out.println("I'm runnable's method-1");
+  }
+}
+
+code in main:
+
+   //Create a thread
+   Thread th1 = new Thread( new Sample() ); // Pass the runnable object
+
+   //OR
+
+   Thread th2 = new Thread( ()-> System.out.println("I'm runnable's method-2") );
+   
+   Runnable r1 = new Runnable() {
+      public void run() {
+         System.out.println("I'm runnable method - 3");
+      }
+   }; 
+   Thread th3 = new Thread(r1);
+
+   //Start the threads
+   th1.start();
+   th2.start();
+   th3.start();
